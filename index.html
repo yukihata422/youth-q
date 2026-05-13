@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YOUTH Q | あるある質問にこたえる</title>
+    <meta
+      name="description"
+      content="ユース世代の信仰、学校、人間関係、進路、教会生活のあるある質問に、短く正直にこたえるFAQサイトです。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="YOUTH Q ホーム">
+        <span class="brand-mark">YQ</span>
+        <span class="brand-copy">
+          <strong>YOUTH Q</strong>
+          <small>あるある質問にこたえる</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="主要ナビゲーション">
+        <a href="#questions">質問を見る</a>
+        <a href="#themes">テーマ</a>
+        <a href="#ask">質問する</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Youth questions, honest answers.</p>
+          <h1 id="hero-title">そのモヤモヤ、聞いていい。</h1>
+          <p>
+            学校、友だち、SNS、進路、信仰、教会。ユースの中でよく出る質問に、
+            短く、正直に、考えるヒントを返します。
+          </p>
+          <section class="ticker" aria-label="よくある質問例">
+            <div class="ticker-track"></div>
+          </section>
+        </div>
+
+        <div class="hero-board">
+          <form class="hero-search" role="search" aria-label="質問を検索">
+            <label for="question-search">質問を探す</label>
+            <div>
+              <input
+                id="question-search"
+                type="search"
+                placeholder="例: 祈れない / 友だち / 将来"
+                autocomplete="off"
+              />
+              <button type="submit">質問を探す</button>
+            </div>
+          </form>
+          <div class="hero-panels" aria-label="差し替え可能なメインビジュアル"></div>
+        </div>
+      </section>
+
+      <section id="themes" class="themes-section" aria-labelledby="themes-title">
+        <div class="section-heading">
+          <p class="eyebrow">Question map</p>
+          <h2 id="themes-title">まずは近いテーマから。</h2>
+        </div>
+        <div class="theme-grid">
+          <button class="theme-card is-active" type="button" data-category="all">
+            <span>00</span>
+            <strong>全部</strong>
+            <small>まとめて見る</small>
+          </button>
+          <button class="theme-card" type="button" data-category="faith">
+            <span>01</span>
+            <strong>信仰</strong>
+            <small>祈り・聖書・疑問</small>
+          </button>
+          <button class="theme-card" type="button" data-category="church">
+            <span>02</span>
+            <strong>教会</strong>
+            <small>ユース・奉仕・居場所</small>
+          </button>
+          <button class="theme-card" type="button" data-category="life">
+            <span>03</span>
+            <strong>生活</strong>
+            <small>学校・SNS・友だち</small>
+          </button>
+          <button class="theme-card" type="button" data-category="future">
+            <span>04</span>
+            <strong>これから</strong>
+            <small>進路・死後・希望</small>
+          </button>
+        </div>
+      </section>
+
+      <section id="questions" class="questions-section" aria-labelledby="questions-title">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ stack</p>
+          <h2 id="questions-title">あるある質問</h2>
+          <p class="result-count" aria-live="polite"></p>
+        </div>
+        <div class="faq-layout">
+          <div class="faq-list"></div>
+        </div>
+      </section>
+
+      <section id="reader" class="reader-section" aria-labelledby="reader-title">
+        <div class="reader-shell">
+          <article class="reader-article">
+            <p class="eyebrow reader-tag"></p>
+            <h2 id="reader-title"></h2>
+            <div class="reader-body"></div>
+            <a class="back-to-questions" href="#questions">質問リストに戻る</a>
+          </article>
+          <aside class="scripture-column" aria-label="みことば引用">
+            <div class="scripture-heading">
+              <span>Scripture excerpts</span>
+              <strong>みことば引用</strong>
+            </div>
+            <div class="scripture-list"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="ask" class="ask-section" aria-labelledby="ask-title">
+        <div>
+          <p class="eyebrow">Ask next</p>
+          <h2 id="ask-title">ここにない質問も、置いていけます。</h2>
+          <p>
+            送信はデモ表示です。実際に使う時は、フォーム送信先やGoogleフォームへのリンクに差し替えられます。
+          </p>
+        </div>
+        <form class="ask-form">
+          <label>
+            ニックネーム
+            <input type="text" name="name" placeholder="例: みなと" />
+          </label>
+          <label>
+            聞きたいこと
+            <textarea name="question" rows="5" placeholder="例: 信じたいのに疑ってしまうのは悪いこと？"></textarea>
+          </label>
+          <button type="submit">質問を送る</button>
+          <p class="form-note" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <strong>YOUTH Q</strong>
+      <span>Black line art, big type, small honest answers.</span>
+    </footer>
+
+    <template id="faq-template">
+      <article class="faq-item">
+        <button type="button" class="faq-question">
+          <span class="faq-category"></span>
+          <strong></strong>
+          <span class="faq-icon" aria-hidden="true">読む</span>
+        </button>
+      </article>
+    </template>
+
+    <script src="./faq-content.js"></script>
+    <script src="./faq-notion-latest.js"></script>
+    <script src="./faq-notion-20260511.js"></script>
+    <script src="./faq-notion-synced.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

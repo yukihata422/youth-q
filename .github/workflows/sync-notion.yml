@@ -1,0 +1,49 @@
+name: Sync Notion FAQ
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sync Notion content
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID || '35f4a4d5c3048093b9f4fb15ba5dd0d5' }}
+        run: node sync-notion.js
+
+      - name: Validate JavaScript
+        run: |
+          node --check app.js
+          node --check faq-content.js
+          node --check faq-notion-latest.js
+          node --check faq-notion-20260511.js
+          node --check faq-notion-synced.js
+
+      - name: Commit synced content
+        run: |
+          if git diff --quiet -- faq-notion-synced.js; then
+            echo "No Notion content changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add faq-notion-synced.js
+          git commit -m "Sync Notion FAQ content"
+          git push
