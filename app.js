@@ -190,7 +190,11 @@ function renderHeroPanels() {
         motion.className = "motion-field";
         motion.setAttribute("aria-hidden", "true");
 
-        tickerQuestions.slice(0, 8).forEach((question) => {
+        const floatingQuestions = shuffleItems(faqs)
+          .slice(0, 8)
+          .map((faq) => faq.question);
+
+        floatingQuestions.forEach((question) => {
           const object = document.createElement("span");
           object.className = "floating-question";
           object.textContent = question;
