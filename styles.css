@@ -1046,6 +1046,25 @@ h2 {
   line-height: 1.9;
 }
 
+.inline-scripture {
+  display: inline;
+}
+
+.scripture-ref-button {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+.inline-scripture-card {
+  display: none;
+}
+
 .back-to-questions {
   display: inline-flex;
   align-items: center;
@@ -1704,6 +1723,93 @@ h2 {
   .scripture-list p {
     font-size: 0.94rem;
     line-height: 1.85;
+  }
+
+  .inline-scripture {
+    display: inline;
+  }
+
+  .scripture-ref-button {
+    display: inline;
+    color: #111111;
+    cursor: pointer;
+    font-weight: 900;
+    text-decoration-line: underline;
+    text-decoration-color: rgba(158, 231, 246, 0.95);
+    text-decoration-thickness: 0.18em;
+    text-underline-offset: 0.12em;
+    transition:
+      color 160ms ease,
+      background 160ms ease;
+  }
+
+  .scripture-ref-button::after {
+    content: "";
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    margin-left: 0.16em;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transform: translateY(-0.08em) rotate(135deg);
+    opacity: 0.5;
+  }
+
+  .scripture-ref-button:focus-visible {
+    outline: 2px solid var(--line);
+    outline-offset: 3px;
+  }
+
+  .inline-scripture-card {
+    position: relative;
+    display: block;
+    max-height: 0;
+    margin: 0;
+    padding: 0 14px;
+    overflow: hidden;
+    border: 0 solid var(--line);
+    background:
+      radial-gradient(circle at 86% 14%, rgba(255, 230, 129, 0.54), transparent 30%),
+      linear-gradient(135deg, #fffdf7, #eff9ff);
+    box-shadow: 0 0 0 rgba(17, 17, 17, 0);
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition:
+      max-height 260ms ease,
+      margin 260ms ease,
+      padding 260ms ease,
+      border-width 160ms ease,
+      box-shadow 260ms ease,
+      opacity 200ms ease,
+      transform 260ms ease;
+  }
+
+  .inline-scripture.is-open .inline-scripture-card {
+    max-height: 520px;
+    margin: 10px 0 14px;
+    padding: 14px;
+    border-width: 2px;
+    box-shadow: 5px 5px 0 rgba(158, 231, 246, 0.56);
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .inline-scripture-card strong,
+  .inline-scripture-card span {
+    display: block;
+  }
+
+  .inline-scripture-card strong {
+    margin-bottom: 6px;
+    color: var(--ink);
+    font-weight: 900;
+    line-height: 1.45;
+  }
+
+  .inline-scripture-card span {
+    color: #29313d;
+    font-size: 0.9rem;
+    line-height: 1.75;
   }
 
   .scripture-heading,

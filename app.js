@@ -332,7 +332,7 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
     const body = document.createElement("p");
 
     heading.textContent = section.heading;
-    body.textContent = section.body;
+    appendBodyWithScriptureRefs(body, section.body, faq.scriptures || []);
     block.append(heading, body);
     readerBody.appendChild(block);
   });
@@ -349,11 +349,92 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
   });
 }
 
+function appendBodyWithScriptureRefs(container, text, scriptures) {
+  const refs = scriptures
+    .map((scripture) => scripture.ref)
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+
+  if (!refs.length) {
+    container.textContent = text;
+    return;
+  }
+
+  const scriptureMap = new Map(
+    scriptures.map((scripture) => [normalizeReference(scripture.ref), scripture]),
+  );
+  const refPattern = refs.map((ref) => escapeRegExp(ref)).join("|");
+  const referenceRegex = new RegExp(`([（(【]?\\s*(?:${refPattern})\\s*[）)】]?)`, "g");
+  let cursor = 0;
+  let match;
+
+  while ((match = referenceRegex.exec(text)) !== null) {
+    if (match.index > cursor) {
+      container.append(document.createTextNode(text.slice(cursor, match.index)));
+    }
+
+    const matchedText = match[0];
+    const scripture = scriptureMap.get(normalizeReference(matchedText));
+
+    if (scripture) {
+      container.append(createInlineScripture(scripture, matchedText));
+    } else {
+      container.append(document.createTextNode(matchedText));
+    }
+
+    cursor = match.index + matchedText.length;
+  }
+
+  if (cursor < text.length) {
+    container.append(document.createTextNode(text.slice(cursor)));
+  }
+}
+
+function createInlineScripture(scripture, label) {
+  const wrap = document.createElement("span");
+  const button = document.createElement("button");
+  const card = document.createElement("span");
+  const ref = document.createElement("strong");
+  const verse = document.createElement("span");
+
+  wrap.className = "inline-scripture";
+  button.type = "button";
+  button.className = "scripture-ref-button";
+  button.textContent = label;
+  button.setAttribute("aria-expanded", "false");
+  card.className = "inline-scripture-card";
+  ref.textContent = `【${scripture.ref}】`;
+  verse.textContent = scripture.text;
+  card.append(ref, verse);
+
+  button.addEventListener("click", () => {
+    if (!window.matchMedia("(max-width: 640px)").matches) {
+      return;
+    }
+
+    const isOpen = wrap.classList.toggle("is-open");
+    button.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  wrap.append(button, card);
+  return wrap;
+}
+
 function safeLineBreaks(value) {
   return String(value)
     .split("\n")
     .map((line) => escapeHtml(line))
     .join("<br>");
+}
+
+function normalizeReference(value) {
+  return String(value)
+    .replace(/[（）()【】\s]/g, "")
+    .replace(/。$/g, "");
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function escapeHtml(value) {
