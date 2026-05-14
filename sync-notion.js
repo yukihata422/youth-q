@@ -31,7 +31,13 @@ async function main() {
     notionFaqs.push(buildFaq(page, blocks));
   }
 
-  notionFaqs.sort((a, b) => a.question.localeCompare(b.question, "ja"));
+  notionFaqs.sort((a, b) => {
+    if (Number.isFinite(a.number) && Number.isFinite(b.number)) {
+      return a.number - b.number;
+    }
+
+    return a.question.localeCompare(b.question, "ja");
+  });
 
   fs.writeFileSync(SYNCED_FILE, formatSyncedFile(notionFaqs), "utf8");
   console.log(`${notionFaqs.length}件のNotionコンテンツを ${path.basename(SYNCED_FILE)} に反映しました。`);
@@ -99,6 +105,7 @@ async function notionRequest(endpoint, options = {}) {
 function buildFaq(page, blocks) {
   const question = cleanText(readPageTitle(page));
   const tags = readTags(page);
+  const number = readEntryNumber(page);
   const category = pickCategory(question, tags);
   const [bodyBlocks, scriptureBlocks] = splitContentBlocks(blocks);
   const sections = parseSections(bodyBlocks);
@@ -107,6 +114,7 @@ function buildFaq(page, blocks) {
 
   return {
     id: `notion-${compactPageId(page.id)}`,
+    number,
     category,
     label: categoryLabel(category),
     source: "notion",
@@ -247,6 +255,58 @@ function readTags(page) {
     (property) => property.type === "multi_select",
   );
   return (tagProperty?.multi_select || []).map((tag) => tag.name);
+}
+
+function readEntryNumber(page) {
+  const properties = Object.entries(page.properties || {});
+  const candidates = properties
+    .filter(([name]) => /^(#|no\.?|num|number|id|番号|通し番号|no|№)$/i.test(name.trim()))
+    .map(([, property]) => property);
+
+  for (const property of [...candidates, ...properties.map(([, property]) => property)]) {
+    const value = readNumberValue(property);
+
+    if (value !== undefined) {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
+function readNumberValue(property) {
+  if (!property) {
+    return undefined;
+  }
+
+  if (property.type === "number" && Number.isFinite(property.number)) {
+    return property.number;
+  }
+
+  if (property.type === "unique_id" && Number.isFinite(property.unique_id?.number)) {
+    return property.unique_id.number;
+  }
+
+  if (property.type === "formula") {
+    if (property.formula?.type === "number" && Number.isFinite(property.formula.number)) {
+      return property.formula.number;
+    }
+
+    if (property.formula?.type === "string") {
+      return parseNumberLike(property.formula.string);
+    }
+  }
+
+  if (property.type === "rich_text") {
+    return parseNumberLike((property.rich_text || []).map((text) => text.plain_text || "").join(""));
+  }
+
+  return undefined;
+}
+
+function parseNumberLike(value) {
+  const match = String(value || "").match(/\d+/);
+  return match ? Number(match[0]) : undefined;
 }
 
 function pickCategory(question, tags) {

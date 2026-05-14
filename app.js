@@ -294,7 +294,7 @@ function renderFaqs() {
     const category = node.querySelector(".faq-category");
     const title = node.querySelector(".faq-question strong");
 
-    category.textContent = faq.label;
+    category.textContent = formatFaqMeta(faq);
     title.textContent = faq.question;
 
     if (faq.id === activeFaqId) {
@@ -318,7 +318,7 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
   }
 
   if (readerTag) {
-    readerTag.textContent = faq.label || "FAQ";
+    readerTag.textContent = formatFaqMeta(faq);
   }
 
   activeFaqId = faq.id;
@@ -408,7 +408,7 @@ function createInlineScripture(scripture, label) {
   card.append(ref, verse);
 
   button.addEventListener("click", () => {
-    if (!window.matchMedia("(max-width: 640px)").matches) {
+    if (!window.matchMedia("(max-width: 980px)").matches) {
       return;
     }
 
@@ -425,6 +425,17 @@ function safeLineBreaks(value) {
     .split("\n")
     .map((line) => escapeHtml(line))
     .join("<br>");
+}
+
+function formatFaqMeta(faq) {
+  const number = Number(faq?.number);
+  const label = faq?.label || "FAQ";
+
+  if (Number.isFinite(number)) {
+    return `#${number} ${label}`;
+  }
+
+  return label;
 }
 
 function normalizeReference(value) {
