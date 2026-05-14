@@ -193,7 +193,7 @@ function parseScriptures(blocks) {
 
     if (inline) {
       current = {
-        ref: cleanText(inline[1]),
+        ref: normalizeScriptureReference(cleanText(inline[1])),
         text: stripOuterQuotes(inline[2] || ""),
       };
       scriptures.push(current);
@@ -216,7 +216,9 @@ function parseScriptures(blocks) {
     current.text = joinParagraphs(current.text, normalized);
   }
 
-  return scriptures.filter((scripture) => scripture.ref && scripture.text);
+  return scriptures.filter(
+    (scripture) => looksLikeReference(scripture.ref) && scripture.text,
+  );
 }
 
 function blockToLines(block) {
@@ -368,13 +370,27 @@ function looksLikeInlineScripture(text) {
 function looksLikeReference(text) {
   const normalized = cleanText(text);
 
-  if (normalized.length > 35) {
+  if (normalized.length > 45 || !/\d/.test(normalized)) {
     return false;
   }
 
   return /(?:章|篇|編|詩篇|ヨハネ|マタイ|ローマ|コリント|ピリピ|ヘブル|使徒|コロサイ|テモテ|ペテロ|黙示録|創世記|出エジプト|レビ|民数記|申命記|士師記|ルツ|サムエル|列王記|歴代誌|エズラ|ネヘミヤ|エステル|ヨブ|箴言|伝道者|雅歌|イザヤ|エレミヤ|哀歌|エゼキエル|ダニエル|ホセア|ヨエル|アモス|オバデヤ|ヨナ|ミカ|ナホム|ハバクク|ゼパニヤ|ハガイ|ゼカリヤ|マラキ|ルカ|マルコ|ガラテヤ|エペソ|テサロニケ|テトス|ピレモン|ヤコブ|ユダ)\s*\d/.test(
     normalized,
   );
+}
+
+function normalizeScriptureReference(ref) {
+  const normalized = cleanText(ref);
+
+  if (looksLikeReference(normalized)) {
+    return normalized;
+  }
+
+  const found = normalized.match(
+    /(?:詩篇|ヨハネ|マタイ|ローマ|コリント|ピリピ|ヘブル|使徒|コロサイ|テモテ|ペテロ|黙示録|創世記|出エジプト|レビ|民数記|申命記|士師記|ルツ|サムエル|列王記|歴代誌|エズラ|ネヘミヤ|エステル|ヨブ|箴言|伝道者|雅歌|イザヤ|エレミヤ|哀歌|エゼキエル|ダニエル|ホセア|ヨエル|アモス|オバデヤ|ヨナ|ミカ|ナホム|ハバクク|ゼパニヤ|ハガイ|ゼカリヤ|マラキ|ルカ|マルコ|ガラテヤ|エペソ|テサロニケ|テトス|ピレモン|ヤコブ|ユダ)[^】「」]*?\d+(?::|章)\d+(?:[-ー〜]\d+)?(?:節)?/,
+  );
+
+  return found ? found[0] : normalized;
 }
 
 function joinParagraphs(current, next) {

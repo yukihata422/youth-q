@@ -1425,7 +1425,7 @@ h2 {
 
   .inline-scripture-card {
     position: relative;
-    display: block;
+    display: none;
     max-height: 0;
     margin: 0;
     padding: 0 14px;
@@ -1448,6 +1448,7 @@ h2 {
   }
 
   .inline-scripture.is-open .inline-scripture-card {
+    display: block;
     max-height: 520px;
     margin: 10px 0 14px;
     padding: 14px;
@@ -1854,7 +1855,7 @@ h2 {
 
   .inline-scripture-card {
     position: relative;
-    display: block;
+    display: none;
     max-height: 0;
     margin: 0;
     padding: 0 14px;
@@ -1877,6 +1878,7 @@ h2 {
   }
 
   .inline-scripture.is-open .inline-scripture-card {
+    display: block;
     max-height: 520px;
     margin: 10px 0 14px;
     padding: 14px;

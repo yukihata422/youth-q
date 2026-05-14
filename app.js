@@ -337,7 +337,9 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
     readerBody.appendChild(block);
   });
 
-  (faq.scriptures || []).forEach((scripture) => {
+  (faq.scriptures || [])
+    .filter((scripture) => isValidScriptureReference(scripture.ref))
+    .forEach((scripture) => {
     const block = document.createElement("article");
     const ref = document.createElement("strong");
     const text = document.createElement("p");
@@ -346,24 +348,28 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
     text.textContent = scripture.text;
     block.append(ref, text);
     scriptureList.appendChild(block);
-  });
+    });
 }
 
 function appendBodyWithScriptureRefs(container, text, scriptures) {
-  const refs = scriptures
-    .map((scripture) => scripture.ref)
-    .filter(Boolean)
-    .sort((a, b) => b.length - a.length);
+  const availableScriptures = mergeScripturesWithGlobal(scriptures);
+  const referenceItems = availableScriptures
+    .filter((scripture) => isValidScriptureReference(scripture.ref))
+    .flatMap((scripture) =>
+      getReferenceAliases(scripture.ref).map((alias) => ({ alias, scripture })),
+    )
+    .filter((item) => item.alias)
+    .sort((a, b) => b.alias.length - a.alias.length);
 
-  if (!refs.length) {
+  if (!referenceItems.length) {
     container.textContent = text;
     return;
   }
 
   const scriptureMap = new Map(
-    scriptures.map((scripture) => [normalizeReference(scripture.ref), scripture]),
+    referenceItems.map((item) => [normalizeReference(item.alias), item.scripture]),
   );
-  const refPattern = refs.map((ref) => escapeRegExp(ref)).join("|");
+  const refPattern = referenceItems.map((item) => escapeRegExp(item.alias)).join("|");
   const referenceRegex = new RegExp(`([（(【]?\\s*(?:${refPattern})\\s*[）)】]?)`, "g");
   let cursor = 0;
   let match;
@@ -388,6 +394,28 @@ function appendBodyWithScriptureRefs(container, text, scriptures) {
   if (cursor < text.length) {
     container.append(document.createTextNode(text.slice(cursor)));
   }
+}
+
+function mergeScripturesWithGlobal(scriptures) {
+  const merged = [];
+  const seen = new Set();
+
+  [...scriptures, ...faqs.flatMap((faq) => faq.scriptures || [])].forEach((scripture) => {
+    if (!isValidScriptureReference(scripture?.ref)) {
+      return;
+    }
+
+    const key = normalizeReference(scripture.ref);
+
+    if (seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+    merged.push(scripture);
+  });
+
+  return merged;
 }
 
 function createInlineScripture(scripture, label) {
@@ -436,6 +464,47 @@ function formatFaqMeta(faq) {
   }
 
   return label;
+}
+
+function isValidScriptureReference(value) {
+  const normalized = normalizeReference(value);
+  return /\d/.test(normalized) && normalized.length >= 4;
+}
+
+function getReferenceAliases(ref) {
+  const aliases = new Set([ref]);
+  const normalized = normalizeReference(ref);
+  const match = normalized.match(/^(.+?)(\d+)章?(\d+(?:[-ー〜]\d+)?)(?:節)?$/);
+
+  if (!match) {
+    return [...aliases];
+  }
+
+  const [, rawBook, chapter, verse] = match;
+  const shortBook = shortenBookName(rawBook);
+
+  aliases.add(`${rawBook}${chapter}:${verse}`);
+  aliases.add(`${rawBook}${chapter}章${verse}節`);
+  aliases.add(`${shortBook}${chapter}:${verse}`);
+  aliases.add(`${shortBook}${chapter}章${verse}節`);
+
+  return [...aliases];
+}
+
+function shortenBookName(book) {
+  return String(book)
+    .replace(/の福音書/g, "")
+    .replace(/人への手紙/g, "")
+    .replace(/への手紙/g, "")
+    .replace(/の働き/g, "")
+    .replace(/第一/g, "1")
+    .replace(/第二/g, "2")
+    .replace(/Ⅰ/g, "1")
+    .replace(/Ⅱ/g, "2")
+    .replace(/Ⅲ/g, "3")
+    .replace(/^コリント2/, "2コリント")
+    .replace(/^コリント1/, "1コリント")
+    .replace(/^コリント3/, "3コリント");
 }
 
 function normalizeReference(value) {
