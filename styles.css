@@ -32,8 +32,11 @@ body {
     var(--paper);
   background-size: 42px 42px;
   font-family: "Noto Sans JP", "Inter", sans-serif;
+  line-break: strict;
   line-height: 1.75;
   isolation: isolate;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 a {
@@ -1070,16 +1073,21 @@ h2 {
 }
 
 .reader-body h3 {
-  margin-bottom: 8px;
-  font-size: clamp(1.06rem, 1.8vw, 1.45rem);
+  margin-bottom: 13px;
+  font-size: clamp(1.14rem, 1.85vw, 1.52rem);
   font-weight: 900;
+  line-break: strict;
+  word-break: normal;
 }
 
 .reader-body p {
   margin-bottom: 0;
   color: #243436;
-  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+  font-size: clamp(0.94rem, 1.08vw, 1.02rem);
+  line-break: strict;
   line-height: 1.9;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .inline-scripture {
@@ -1196,7 +1204,10 @@ h2 {
   margin-bottom: 0;
   color: #29313d;
   font-size: 0.9rem;
+  line-break: strict;
   line-height: 1.8;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .export-sheet {
@@ -1208,7 +1219,7 @@ h2 {
 }
 
 .export-page {
-  width: min(1200px, calc(100vw - 40px));
+  width: min(920px, calc(100vw - 40px));
   margin: 40px auto;
   border: 2px solid var(--line);
   background:
@@ -1253,15 +1264,17 @@ h2 {
 }
 
 .export-header h1 {
-  max-width: 18em;
+  max-width: 14em;
   margin: 0;
-  font-size: 2.9rem;
+  font-size: 2.55rem;
+  line-break: strict;
   line-height: 1.16;
+  word-break: normal;
 }
 
 .export-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1.24fr) minmax(300px, 0.76fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.82fr);
   gap: 0;
   background: #ffffff;
 }
@@ -1276,22 +1289,27 @@ h2 {
 }
 
 .export-answer section + section {
-  margin-top: 22px;
+  margin-top: 28px;
 }
 
 .export-answer h2,
 .export-scriptures h2 {
-  margin: 0 0 10px;
-  font-size: 1.35rem;
+  margin: 0 0 14px;
+  font-size: 1.42rem;
+  line-break: strict;
   line-height: 1.35;
+  word-break: normal;
 }
 
 .export-answer p,
 .export-scriptures p {
   margin: 0;
   color: #243436;
-  font-size: 0.96rem;
+  font-size: 0.9rem;
+  line-break: strict;
   line-height: 1.85;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .export-scriptures {
@@ -2185,8 +2203,8 @@ h2 {
 
 @media print {
   @page {
-    size: A4 landscape;
-    margin: 10mm;
+    size: A4 portrait;
+    margin: 11mm;
   }
 
   body.is-exporting > :not(.export-sheet) {
@@ -2195,6 +2213,8 @@ h2 {
 
   body.is-exporting {
     background: #ffffff;
+    line-break: strict;
+    word-break: normal;
   }
 
   body.is-exporting .export-sheet {
@@ -2206,62 +2226,77 @@ h2 {
     margin: 0;
     border: 2px solid #111111;
     box-shadow: none;
-    break-inside: avoid;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
   body.is-exporting .export-header {
-    padding: 18px 22px 16px;
+    padding: 14px 16px 13px;
   }
 
   body.is-exporting .export-brand {
-    margin-bottom: 14px;
+    margin-bottom: 11px;
   }
 
   body.is-exporting .export-brand-mark {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
   }
 
   body.is-exporting .export-header h1 {
-    max-width: 19em;
-    font-size: 2.05rem;
+    max-width: 14em;
+    font-size: 1.52rem;
+    line-break: strict;
+    line-height: 1.2;
+    word-break: normal;
   }
 
   body.is-exporting .export-columns {
-    grid-template-columns: minmax(0, 1.22fr) minmax(250px, 0.78fr);
+    grid-template-columns: minmax(0, 1.12fr) minmax(205px, 0.88fr);
   }
 
   body.is-exporting .export-answer,
   body.is-exporting .export-scriptures {
-    padding: 18px 22px;
+    padding: 15px 16px;
   }
 
   body.is-exporting .export-answer section + section {
-    margin-top: 12px;
+    margin-top: 16px;
+  }
+
+  body.is-exporting .export-answer section,
+  body.is-exporting .export-scriptures section {
+    break-inside: avoid;
   }
 
   body.is-exporting .export-answer h2,
   body.is-exporting .export-scriptures h2 {
-    font-size: 1rem;
+    margin-bottom: 8px;
+    font-size: 0.86rem;
+    line-height: 1.38;
   }
 
   body.is-exporting .export-answer p {
-    font-size: 0.74rem;
-    line-height: 1.62;
+    font-size: 0.68rem;
+    line-break: strict;
+    line-height: 1.68;
+    word-break: normal;
   }
 
   body.is-exporting .export-scriptures h3 {
-    font-size: 0.68rem;
+    margin-bottom: 5px;
+    font-size: 0.62rem;
+    line-height: 1.45;
   }
 
   body.is-exporting .export-scriptures p {
-    font-size: 0.62rem;
-    line-height: 1.55;
+    font-size: 0.56rem;
+    line-break: strict;
+    line-height: 1.58;
+    word-break: normal;
   }
 
   body.is-exporting .export-license {
-    font-size: 0.58rem;
+    font-size: 0.52rem;
   }
 }
