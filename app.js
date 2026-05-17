@@ -21,6 +21,9 @@ const readerTag = document.querySelector(".reader-tag");
 const readerTitle = document.querySelector("#reader-title");
 const readerBody = document.querySelector(".reader-body");
 const scriptureList = document.querySelector(".scripture-list");
+const exportPdfButton = document.querySelector(".export-pdf");
+const exportJpegButton = document.querySelector(".export-jpeg");
+const exportSheet = document.querySelector(".export-sheet");
 
 let activeCategory = "all";
 let activeQuery = "";
@@ -96,6 +99,32 @@ askForm?.addEventListener("submit", (event) => {
 
   formNote.textContent = "質問を受け取りました。次のFAQ候補として表示できる形です。";
   askForm.reset();
+});
+
+exportPdfButton?.addEventListener("click", () => {
+  const faq = getActiveFaq();
+
+  if (!faq) {
+    return;
+  }
+
+  buildExportSheet(faq);
+  document.body.classList.add("is-exporting");
+  window.setTimeout(() => window.print(), 80);
+});
+
+window.addEventListener("afterprint", () => {
+  document.body.classList.remove("is-exporting");
+});
+
+exportJpegButton?.addEventListener("click", async () => {
+  const faq = getActiveFaq();
+
+  if (!faq) {
+    return;
+  }
+
+  await downloadFaqJpeg(faq);
 });
 
 function renderTicker() {
@@ -340,14 +369,14 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
   (faq.scriptures || [])
     .filter((scripture) => isValidScriptureReference(scripture.ref))
     .forEach((scripture) => {
-    const block = document.createElement("article");
-    const ref = document.createElement("strong");
-    const text = document.createElement("p");
+      const block = document.createElement("article");
+      const ref = document.createElement("strong");
+      const text = document.createElement("p");
 
-    ref.textContent = `【${scripture.ref}】`;
-    text.textContent = scripture.text;
-    block.append(ref, text);
-    scriptureList.appendChild(block);
+      ref.textContent = `【${scripture.ref}】`;
+      text.textContent = scripture.text;
+      block.append(ref, text);
+      scriptureList.appendChild(block);
     });
 }
 
@@ -446,6 +475,321 @@ function createInlineScripture(scripture, label) {
 
   wrap.append(button, card);
   return wrap;
+}
+
+function getActiveFaq() {
+  return faqs.find((item) => item.id === activeFaqId) || faqs[0];
+}
+
+function getValidScriptures(faq) {
+  return (faq?.scriptures || []).filter((scripture) =>
+    isValidScriptureReference(scripture.ref),
+  );
+}
+
+function buildExportSheet(faq) {
+  if (!exportSheet) {
+    return;
+  }
+
+  const page = document.createElement("article");
+  const header = document.createElement("header");
+  const brand = document.createElement("div");
+  const brandMark = document.createElement("span");
+  const brandText = document.createElement("span");
+  const meta = document.createElement("p");
+  const title = document.createElement("h1");
+  const columns = document.createElement("div");
+  const answer = document.createElement("section");
+  const scriptures = document.createElement("aside");
+  const scriptureHeading = document.createElement("h2");
+  const license = document.createElement("p");
+
+  exportSheet.innerHTML = "";
+  page.className = "export-page";
+  header.className = "export-header";
+  brand.className = "export-brand";
+  brandMark.className = "export-brand-mark";
+  brandText.className = "export-brand-text";
+  meta.className = "export-meta";
+  columns.className = "export-columns";
+  answer.className = "export-answer";
+  scriptures.className = "export-scriptures";
+  license.className = "export-license";
+
+  brandMark.textContent = "YQ";
+  brandText.textContent = "YOUTH Q";
+  meta.textContent = formatFaqMeta(faq);
+  title.textContent = faq.question;
+  scriptureHeading.textContent = "みことば引用";
+  license.textContent = "※聖書 新改訳 ©2003 新日本聖書刊行会";
+
+  brand.append(brandMark, brandText);
+  header.append(brand, meta, title);
+
+  (faq.sections || []).forEach((section) => {
+    const block = document.createElement("section");
+    const heading = document.createElement("h2");
+    const body = document.createElement("p");
+
+    heading.textContent = section.heading;
+    body.textContent = section.body;
+    block.append(heading, body);
+    answer.appendChild(block);
+  });
+
+  scriptures.appendChild(scriptureHeading);
+  getValidScriptures(faq).forEach((scripture) => {
+    const block = document.createElement("section");
+    const ref = document.createElement("h3");
+    const text = document.createElement("p");
+
+    ref.textContent = `【${scripture.ref}】`;
+    text.textContent = scripture.text;
+    block.append(ref, text);
+    scriptures.appendChild(block);
+  });
+  scriptures.appendChild(license);
+
+  columns.append(answer, scriptures);
+  page.append(header, columns);
+  exportSheet.appendChild(page);
+}
+
+async function downloadFaqJpeg(faq) {
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
+  const canvas = renderFaqToCanvas(faq);
+  const link = document.createElement("a");
+
+  link.download = `${toFileSlug(faq.question)}.jpg`;
+  link.href = canvas.toDataURL("image/jpeg", 0.92);
+  link.click();
+}
+
+function renderFaqToCanvas(faq) {
+  const scale = 2;
+  const width = 1600;
+  const margin = 72;
+  const gap = 44;
+  const leftWidth = 900;
+  const rightWidth = width - margin * 2 - gap - leftWidth;
+  const measureCanvas = document.createElement("canvas");
+  const measureCtx = measureCanvas.getContext("2d");
+  const scriptures = getValidScriptures(faq);
+  const titleLines = wrapCanvasText(
+    measureCtx,
+    faq.question,
+    leftWidth + rightWidth + gap - 180,
+    "900 54px 'Noto Sans JP', sans-serif",
+  );
+  const sectionBlocks = (faq.sections || []).map((section) => ({
+    heading: section.heading,
+    bodyLines: wrapCanvasText(
+      measureCtx,
+      section.body,
+      leftWidth - 56,
+      "500 28px 'Noto Sans JP', sans-serif",
+    ),
+  }));
+  const scriptureBlocks = scriptures.map((scripture) => ({
+    ref: `【${scripture.ref}】`,
+    textLines: wrapCanvasText(
+      measureCtx,
+      scripture.text,
+      rightWidth - 48,
+      "500 23px 'Noto Sans JP', sans-serif",
+    ),
+  }));
+  const headerHeight = 160 + titleLines.length * 62;
+  const leftHeight = sectionBlocks.reduce(
+    (total, section) => total + 52 + section.bodyLines.length * 44 + 26,
+    0,
+  );
+  const rightHeight =
+    78 +
+    scriptureBlocks.reduce((total, block) => total + 42 + block.textLines.length * 35 + 24, 0) +
+    48;
+  const height = Math.max(headerHeight + Math.max(leftHeight, rightHeight) + margin, 1400);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  ctx.scale(scale, scale);
+
+  drawExportBackground(ctx, width, height);
+  drawExportHeader(ctx, faq, titleLines, margin, width);
+
+  const top = headerHeight;
+  drawAnswerColumn(ctx, sectionBlocks, margin, top, leftWidth, height - top - margin);
+  drawScriptureColumn(
+    ctx,
+    scriptureBlocks,
+    margin + leftWidth + gap,
+    top,
+    rightWidth,
+    height - top - margin,
+  );
+
+  return canvas;
+}
+
+function drawExportBackground(ctx, width, height) {
+  ctx.fillStyle = "#fffdf7";
+  ctx.fillRect(0, 0, width, height);
+
+  const accent = ctx.createLinearGradient(0, 0, width, 0);
+  accent.addColorStop(0, "#fff0a6");
+  accent.addColorStop(0.48, "#f6fbff");
+  accent.addColorStop(1, "#f8d8e8");
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, width, 210);
+
+  ctx.strokeStyle = "rgba(158, 231, 246, 0.32)";
+  ctx.lineWidth = 1;
+  for (let x = 0; x < width; x += 44) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, height);
+    ctx.stroke();
+  }
+  for (let y = 0; y < height; y += 44) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(width, y);
+    ctx.stroke();
+  }
+}
+
+function drawExportHeader(ctx, faq, titleLines, margin, width) {
+  ctx.fillStyle = "#ffe778";
+  ctx.strokeStyle = "#111111";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(margin + 42, 68, 42, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#111111";
+  ctx.font = "900 27px Inter, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("YQ", margin + 42, 68);
+
+  ctx.textAlign = "left";
+  ctx.font = "900 26px Inter, sans-serif";
+  ctx.fillText("YOUTH Q", margin + 104, 58);
+  ctx.font = "800 18px 'Noto Sans JP', sans-serif";
+  ctx.fillStyle = "#5f6673";
+  ctx.fillText("あるある質問にこたえる", margin + 104, 88);
+
+  ctx.fillStyle = "#111111";
+  ctx.font = "900 24px 'Noto Sans JP', sans-serif";
+  ctx.textAlign = "right";
+  ctx.fillText(formatFaqMeta(faq), width - margin, 72);
+
+  ctx.textAlign = "left";
+  ctx.font = "900 54px 'Noto Sans JP', sans-serif";
+  ctx.fillStyle = "#111111";
+  drawCanvasLines(ctx, titleLines, margin, 160, 62);
+}
+
+function drawAnswerColumn(ctx, sections, x, y, width, minHeight) {
+  let currentY = y + 36;
+
+  drawCanvasPanel(ctx, x, y, width, minHeight, "#ffffff");
+  sections.forEach((section) => {
+    ctx.fillStyle = "#111111";
+    ctx.font = "900 30px 'Noto Sans JP', sans-serif";
+    ctx.fillText(section.heading, x + 28, currentY);
+    currentY += 44;
+
+    ctx.fillStyle = "#243436";
+    ctx.font = "500 28px 'Noto Sans JP', sans-serif";
+    drawCanvasLines(ctx, section.bodyLines, x + 28, currentY, 44);
+    currentY += section.bodyLines.length * 44 + 24;
+  });
+}
+
+function drawScriptureColumn(ctx, scriptures, x, y, width, minHeight) {
+  let currentY = y + 36;
+
+  drawCanvasPanel(ctx, x, y, width, minHeight, "#eef8ff");
+  ctx.fillStyle = "#111111";
+  ctx.font = "900 34px 'Noto Sans JP', sans-serif";
+  ctx.fillText("みことば引用", x + 24, currentY);
+  currentY += 52;
+
+  scriptures.forEach((scripture) => {
+    ctx.fillStyle = "#111111";
+    ctx.font = "900 22px 'Noto Sans JP', sans-serif";
+    ctx.fillText(scripture.ref, x + 24, currentY);
+    currentY += 34;
+
+    ctx.fillStyle = "#29313d";
+    ctx.font = "500 23px 'Noto Sans JP', sans-serif";
+    drawCanvasLines(ctx, scripture.textLines, x + 24, currentY, 35);
+    currentY += scripture.textLines.length * 35 + 24;
+  });
+
+  ctx.fillStyle = "rgba(41, 49, 61, 0.72)";
+  ctx.font = "700 18px 'Noto Sans JP', sans-serif";
+  ctx.textAlign = "right";
+  ctx.fillText("※聖書 新改訳 ©2003 新日本聖書刊行会", x + width - 24, y + minHeight - 28);
+  ctx.textAlign = "left";
+}
+
+function drawCanvasPanel(ctx, x, y, width, height, fill) {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = "#111111";
+  ctx.lineWidth = 4;
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeRect(x, y, width, height);
+}
+
+function wrapCanvasText(ctx, text, maxWidth, font) {
+  const lines = [];
+  let line = "";
+
+  ctx.font = font;
+  String(text)
+    .split("\n")
+    .forEach((paragraph) => {
+      [...paragraph].forEach((char) => {
+        const next = line + char;
+
+        if (line && ctx.measureText(next).width > maxWidth) {
+          lines.push(line);
+          line = char;
+          return;
+        }
+
+        line = next;
+      });
+
+      if (line) {
+        lines.push(line);
+        line = "";
+      }
+    });
+
+  return lines;
+}
+
+function drawCanvasLines(ctx, lines, x, y, lineHeight) {
+  lines.forEach((line, index) => {
+    ctx.fillText(line, x, y + index * lineHeight);
+  });
+}
+
+function toFileSlug(value) {
+  return String(value)
+    .replace(/[\\/:*?"<>|]/g, "")
+    .replace(/\s+/g, "-")
+    .slice(0, 48) || "youth-q";
 }
 
 function safeLineBreaks(value) {

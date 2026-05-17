@@ -114,6 +114,10 @@
           <article class="reader-article">
             <p class="eyebrow reader-tag"></p>
             <h2 id="reader-title"></h2>
+            <div class="reader-actions" aria-label="回答を書き出す">
+              <button class="export-button export-pdf" type="button">PDFを書き出す</button>
+              <button class="export-button export-jpeg" type="button">JPEGを書き出す</button>
+            </div>
             <div class="reader-body"></div>
             <a class="back-to-questions" href="#questions">質問リストに戻る</a>
           </article>
@@ -170,6 +174,7 @@
     <script src="./faq-notion-latest.js"></script>
     <script src="./faq-notion-20260511.js"></script>
     <script src="./faq-notion-synced.js"></script>
+    <div class="export-sheet" aria-hidden="true"></div>
     <script src="./app.js"></script>
   </body>
 </html>

@@ -1028,6 +1028,42 @@ h2 {
   line-height: 1.16;
 }
 
+.reader-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: -8px 0 28px;
+}
+
+.export-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 2px solid var(--line);
+  background: #ffffff;
+  box-shadow: 4px 4px 0 rgba(158, 231, 246, 0.7);
+  color: var(--ink);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.export-button:hover,
+.export-button:focus-visible {
+  background: var(--yellow);
+  box-shadow: 4px 7px 0 rgba(255, 172, 207, 0.8);
+  transform: translateY(-3px);
+}
+
+.export-button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
 .reader-body {
   display: grid;
   gap: 20px;
@@ -1161,6 +1197,133 @@ h2 {
   color: #29313d;
   font-size: 0.9rem;
   line-height: 1.8;
+}
+
+.export-sheet {
+  display: none;
+}
+
+.is-exporting .export-sheet {
+  display: block;
+}
+
+.export-page {
+  width: min(1200px, calc(100vw - 40px));
+  margin: 40px auto;
+  border: 2px solid var(--line);
+  background:
+    linear-gradient(90deg, rgba(255, 231, 120, 0.38), rgba(246, 251, 255, 0.9) 52%, rgba(248, 216, 232, 0.56)),
+    var(--paper);
+  box-shadow: 10px 10px 0 rgba(158, 231, 246, 0.65);
+  color: var(--ink);
+}
+
+.export-header {
+  padding: 30px 36px 24px;
+  border-bottom: 2px solid var(--line);
+}
+
+.export-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+}
+
+.export-brand-mark {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border: 3px solid var(--line);
+  border-radius: 50%;
+  background: var(--yellow);
+}
+
+.export-meta {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.export-header h1 {
+  max-width: 18em;
+  margin: 0;
+  font-size: 2.9rem;
+  line-height: 1.16;
+}
+
+.export-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.24fr) minmax(300px, 0.76fr);
+  gap: 0;
+  background: #ffffff;
+}
+
+.export-answer,
+.export-scriptures {
+  padding: 30px 34px;
+}
+
+.export-answer {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.export-answer section + section {
+  margin-top: 22px;
+}
+
+.export-answer h2,
+.export-scriptures h2 {
+  margin: 0 0 10px;
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.export-answer p,
+.export-scriptures p {
+  margin: 0;
+  color: #243436;
+  font-size: 0.96rem;
+  line-height: 1.85;
+}
+
+.export-scriptures {
+  border-left: 2px solid var(--line);
+  background:
+    radial-gradient(circle at 86% 8%, rgba(255, 231, 120, 0.52), transparent 30%),
+    #eef8ff;
+}
+
+.export-scriptures section {
+  padding: 14px 0;
+  border-top: 2px solid rgba(17, 17, 17, 0.14);
+}
+
+.export-scriptures h3 {
+  margin: 0 0 7px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.export-scriptures p {
+  font-size: 0.83rem;
+  line-height: 1.75;
+}
+
+.export-license {
+  margin-top: 18px;
+  color: rgba(41, 49, 61, 0.72);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: right;
 }
 
 .ask-section {
@@ -2017,5 +2180,88 @@ h2 {
 
   to {
     width: min(14em, 100%);
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body.is-exporting > :not(.export-sheet) {
+    display: none !important;
+  }
+
+  body.is-exporting {
+    background: #ffffff;
+  }
+
+  body.is-exporting .export-sheet {
+    display: block !important;
+  }
+
+  body.is-exporting .export-page {
+    width: 100%;
+    margin: 0;
+    border: 2px solid #111111;
+    box-shadow: none;
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body.is-exporting .export-header {
+    padding: 18px 22px 16px;
+  }
+
+  body.is-exporting .export-brand {
+    margin-bottom: 14px;
+  }
+
+  body.is-exporting .export-brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  body.is-exporting .export-header h1 {
+    max-width: 19em;
+    font-size: 2.05rem;
+  }
+
+  body.is-exporting .export-columns {
+    grid-template-columns: minmax(0, 1.22fr) minmax(250px, 0.78fr);
+  }
+
+  body.is-exporting .export-answer,
+  body.is-exporting .export-scriptures {
+    padding: 18px 22px;
+  }
+
+  body.is-exporting .export-answer section + section {
+    margin-top: 12px;
+  }
+
+  body.is-exporting .export-answer h2,
+  body.is-exporting .export-scriptures h2 {
+    font-size: 1rem;
+  }
+
+  body.is-exporting .export-answer p {
+    font-size: 0.74rem;
+    line-height: 1.62;
+  }
+
+  body.is-exporting .export-scriptures h3 {
+    font-size: 0.68rem;
+  }
+
+  body.is-exporting .export-scriptures p {
+    font-size: 0.62rem;
+    line-height: 1.55;
+  }
+
+  body.is-exporting .export-license {
+    font-size: 0.58rem;
   }
 }
