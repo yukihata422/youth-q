@@ -54,7 +54,7 @@
               <input
                 id="question-search"
                 type="search"
-                placeholder="例: 祈れない / 友だち / 将来"
+                placeholder="例: 祈れない / ヨハネ15:5 / 愛"
                 autocomplete="off"
               />
               <button type="submit">質問を探す</button>
@@ -115,7 +115,7 @@
             <p class="eyebrow reader-tag"></p>
             <h2 id="reader-title"></h2>
             <div class="reader-actions" aria-label="回答を書き出す">
-              <button class="export-button export-pdf" type="button">PDFを書き出す</button>
+              <button class="export-button export-pdf" type="button">PDFをダウンロード</button>
             </div>
             <div class="reader-body"></div>
             <a class="back-to-questions" href="#questions">質問リストに戻る</a>
@@ -164,10 +164,36 @@
         <button type="button" class="faq-question">
           <span class="faq-category"></span>
           <strong></strong>
+          <span class="faq-hit"></span>
           <span class="faq-icon" aria-hidden="true">読む</span>
         </button>
       </article>
     </template>
+
+    <div class="pdf-preview-modal" aria-hidden="true" hidden>
+      <div class="pdf-preview-backdrop" data-pdf-close></div>
+      <section
+        class="pdf-preview-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pdf-preview-title"
+      >
+        <header class="pdf-preview-header">
+          <div>
+            <p class="eyebrow">PDF preview</p>
+            <h2 id="pdf-preview-title">書き出し前の確認</h2>
+          </div>
+          <button class="pdf-preview-close" type="button" data-pdf-close aria-label="閉じる">×</button>
+        </header>
+        <div class="pdf-preview-body">
+          <img class="pdf-preview-image" alt="PDF書き出しプレビュー" />
+        </div>
+        <footer class="pdf-preview-actions">
+          <button class="pdf-preview-cancel" type="button" data-pdf-close>戻る</button>
+          <button class="pdf-preview-download" type="button">ダウンロードする</button>
+        </footer>
+      </section>
+    </div>
 
     <script src="./faq-content.js"></script>
     <script src="./faq-notion-latest.js"></script>

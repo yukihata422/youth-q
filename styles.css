@@ -989,6 +989,25 @@ h2 {
   line-height: 1.25;
 }
 
+.faq-hit {
+  display: block;
+  grid-column: 2;
+  max-width: 76ch;
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-break: strict;
+  line-height: 1.55;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faq-hit[hidden] {
+  display: none;
+}
+
 .faq-icon {
   display: grid;
   min-width: 56px;
@@ -1022,6 +1041,8 @@ h2 {
 }
 
 .reader-article {
+  display: flex;
+  flex-direction: column;
   padding: clamp(22px, 4vw, 42px);
 }
 
@@ -1065,6 +1086,130 @@ h2 {
 .export-button:focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 3px;
+}
+
+.export-button[aria-busy="true"] {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.pdf-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 3vw, 34px);
+}
+
+body.has-pdf-preview {
+  overflow: hidden;
+}
+
+.pdf-preview-modal[hidden] {
+  display: none;
+}
+
+.pdf-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 230, 129, 0.34), transparent 28%),
+    rgba(17, 17, 17, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.pdf-preview-dialog {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(96vw, 860px);
+  max-height: min(92vh, 980px);
+  border: 2px solid var(--line);
+  background: var(--paper);
+  box-shadow: 12px 12px 0 rgba(158, 231, 246, 0.72);
+  animation: pdf-preview-in 220ms ease both;
+}
+
+.pdf-preview-header,
+.pdf-preview-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 2px solid var(--line);
+}
+
+.pdf-preview-header h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  line-height: 1.25;
+}
+
+.pdf-preview-close,
+.pdf-preview-cancel,
+.pdf-preview-download {
+  min-height: 42px;
+  border: 2px solid var(--line);
+  background: #ffffff;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pdf-preview-close {
+  width: 42px;
+  padding: 0;
+  font-size: 1.3rem;
+}
+
+.pdf-preview-body {
+  min-height: 0;
+  padding: 18px;
+  overflow: auto;
+  background:
+    linear-gradient(90deg, rgba(158, 231, 246, 0.16) 1px, transparent 1px),
+    linear-gradient(rgba(255, 172, 207, 0.12) 1px, transparent 1px),
+    #f7f9fb;
+  background-size: 28px 28px;
+}
+
+.pdf-preview-image {
+  display: block;
+  width: min(100%, 560px);
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid rgba(17, 17, 17, 0.28);
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(17, 17, 17, 0.18);
+}
+
+.pdf-preview-actions {
+  justify-content: flex-end;
+  border-top: 2px solid var(--line);
+  border-bottom: 0;
+}
+
+.pdf-preview-cancel,
+.pdf-preview-download {
+  padding: 0 16px;
+}
+
+.pdf-preview-download {
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 rgba(255, 172, 207, 0.8);
+}
+
+@keyframes pdf-preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .reader-body {
@@ -1112,9 +1257,11 @@ h2 {
 .back-to-questions {
   display: inline-flex;
   align-items: center;
+  align-self: flex-end;
   gap: 10px;
   width: fit-content;
   margin-top: clamp(28px, 4vw, 44px);
+  margin-left: auto;
   padding: 13px 18px;
   border: 2px solid var(--line);
   background: var(--yellow);
@@ -1230,15 +1377,22 @@ h2 {
 }
 
 .export-header {
-  padding: 30px 36px 24px;
+  padding: 28px 34px 24px;
   border-bottom: 2px solid var(--line);
+}
+
+.export-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
 }
 
 .export-brand {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 24px;
   font-family: "Inter", sans-serif;
   font-weight: 900;
 }
@@ -1254,19 +1408,24 @@ h2 {
 }
 
 .export-meta {
-  margin: 0 0 8px;
+  max-width: 12em;
+  margin: 5px 0 0;
   color: var(--muted);
   font-family: "Inter", "Noto Sans JP", sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.08em;
+  line-height: 1.45;
+  text-align: right;
   text-transform: uppercase;
 }
 
-.export-header h1 {
+.export-title {
+  display: block;
   max-width: 14em;
   margin: 0;
   font-size: 2.55rem;
+  font-weight: 900;
   line-break: strict;
   line-height: 1.16;
   word-break: normal;
@@ -1967,6 +2126,16 @@ h2 {
     line-height: 1.32;
   }
 
+  .faq-hit {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    max-width: none;
+    margin-top: 0;
+    padding-right: 0;
+    font-size: 0.76rem;
+    white-space: normal;
+  }
+
   .faq-icon {
     grid-column: 2;
     grid-row: 1 / 3;
@@ -2204,7 +2373,7 @@ h2 {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 11mm;
+    margin: 10mm;
   }
 
   body.is-exporting > :not(.export-sheet) {
@@ -2223,6 +2392,7 @@ h2 {
 
   body.is-exporting .export-page {
     width: 100%;
+    max-width: none;
     margin: 0;
     border: 2px solid #111111;
     box-shadow: none;
@@ -2231,21 +2401,41 @@ h2 {
   }
 
   body.is-exporting .export-header {
-    padding: 14px 16px 13px;
+    padding: 13px 15px 12px;
   }
 
-  body.is-exporting .export-brand {
-    margin-bottom: 11px;
+  body.is-exporting .export-header-top {
+    margin-bottom: 10px;
   }
 
   body.is-exporting .export-brand-mark {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
+    border-width: 2px;
+    font-size: 0.82rem;
   }
 
-  body.is-exporting .export-header h1 {
-    max-width: 14em;
-    font-size: 1.52rem;
+  body.is-exporting .export-brand {
+    gap: 9px;
+  }
+
+  body.is-exporting .export-brand-text {
+    font-size: 0.72rem;
+  }
+
+  body.is-exporting .export-meta {
+    max-width: 12em;
+    margin-top: 2px;
+    font-size: 0.52rem;
+    line-height: 1.35;
+    text-align: right;
+  }
+
+  body.is-exporting .export-title {
+    display: block;
+    max-width: 15.5em;
+    font-size: 1.32rem;
+    font-weight: 900;
     line-break: strict;
     line-height: 1.2;
     word-break: normal;
