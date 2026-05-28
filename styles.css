@@ -14,6 +14,12 @@
   --soft-line: rgba(17, 17, 17, 0.16);
 }
 
+@property --yq-ripple-offset {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -37,6 +43,13 @@ body {
   isolation: isolate;
   overflow-wrap: break-word;
   word-break: normal;
+}
+
+.site-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 a {
@@ -75,16 +88,106 @@ button {
 }
 
 .brand-mark {
+  position: relative;
+  isolation: isolate;
   display: grid;
   width: 44px;
   height: 44px;
   place-items: center;
-  border: 2px solid var(--line);
+  border: 1px solid rgba(17, 17, 17, 0.92);
   border-radius: 50%;
-  background: var(--yellow);
+  background:
+    radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.55), transparent 34%),
+    var(--yellow);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.34),
+    inset 0 -5px 9px rgba(17, 17, 17, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.9);
   font-family: "Inter", sans-serif;
   font-weight: 900;
   line-height: 1;
+  overflow: hidden;
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.brand-mark::before {
+  --yq-ripple-offset: 0px;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.72), transparent 18%),
+    radial-gradient(circle at 76% 24%, rgba(255, 45, 56, 0.14), transparent 14%),
+    radial-gradient(circle at 88% 48%, rgba(66, 225, 255, 0.17), transparent 15%),
+    radial-gradient(circle at 22% 78%, rgba(84, 255, 154, 0.1), transparent 14%),
+    radial-gradient(circle at 38% 88%, rgba(70, 92, 255, 0.11), transparent 15%),
+    repeating-radial-gradient(
+      circle at 100% 0%,
+      rgba(20, 20, 20, 0.96) calc(var(--yq-ripple-offset) + 0px),
+      rgba(255, 255, 255, 0.95) calc(var(--yq-ripple-offset) + 2px),
+      rgba(206, 217, 224, 0.9) calc(var(--yq-ripple-offset) + 13px),
+      rgba(83, 90, 98, 0.94) calc(var(--yq-ripple-offset) + 18px),
+      rgba(0, 0, 0, 0.96) calc(var(--yq-ripple-offset) + 22px),
+      rgba(255, 54, 64, 0.13) calc(var(--yq-ripple-offset) + 24px),
+      rgba(84, 255, 160, 0.11) calc(var(--yq-ripple-offset) + 25px),
+      rgba(65, 210, 255, 0.16) calc(var(--yq-ripple-offset) + 27px),
+      rgba(86, 100, 255, 0.12) calc(var(--yq-ripple-offset) + 29px),
+      rgba(255, 255, 255, 0.92) calc(var(--yq-ripple-offset) + 31px),
+      rgba(11, 11, 12, 0.98) calc(var(--yq-ripple-offset) + 36px),
+      rgba(11, 11, 12, 0.98) calc(var(--yq-ripple-offset) + 84px)
+    );
+  filter: url("#yq-liquid-metal-edge") saturate(1.22) contrast(1.1) blur(0.05px);
+  opacity: 0.9;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 4px));
+  animation: yq-liquid-metal-flow 6800ms linear infinite;
+  will-change: --yq-ripple-offset, transform;
+}
+
+.brand-mark::after {
+  z-index: 2;
+  inset: -7px;
+  background:
+    linear-gradient(
+      118deg,
+      transparent 0%,
+      transparent 34%,
+      rgba(255, 255, 255, 0.62) 45%,
+      rgba(255, 255, 255, 0.14) 52%,
+      transparent 62%,
+      transparent 100%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.42;
+  transform: translateX(-130%) skewX(-10deg);
+  animation: yq-liquid-polish 3400ms cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.brand:hover .brand-mark::before,
+.brand:focus-visible .brand-mark::before {
+  filter: url("#yq-liquid-metal-edge") saturate(1.42) contrast(1.18) blur(0.04px);
+  opacity: 0.94;
+  animation-duration: 4600ms;
+}
+
+.brand:hover .brand-mark::after,
+.brand:focus-visible .brand-mark::after {
+  opacity: 0.56;
+  animation-duration: 2900ms;
+}
+
+.brand-mark-text {
+  position: relative;
+  z-index: 3;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 -1px 0 rgba(17, 17, 17, 0.12);
 }
 
 .brand-copy strong,
@@ -1555,6 +1658,49 @@ body.has-pdf-preview {
   }
 }
 
+@keyframes yq-liquid-metal-flow {
+  0% {
+    --yq-ripple-offset: 0px;
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    --yq-ripple-offset: -42px;
+    transform: rotate(180deg) scale(1);
+  }
+
+  100% {
+    --yq-ripple-offset: -84px;
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes yq-liquid-polish {
+  0% {
+    opacity: 0;
+    transform: translateX(-135%) skewX(-10deg);
+  }
+
+  24% {
+    opacity: 0;
+    transform: translateX(-135%) skewX(-10deg);
+  }
+
+  52% {
+    opacity: 0.42;
+  }
+
+  76% {
+    opacity: 0;
+    transform: translateX(135%) skewX(-10deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(135%) skewX(-10deg);
+  }
+}
+
 .ask-form label {
   display: grid;
   gap: 7px;
@@ -1873,6 +2019,7 @@ body.has-pdf-preview {
   }
 
   .site-header {
+    flex-wrap: wrap;
     padding: 12px 14px;
   }
 

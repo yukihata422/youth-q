@@ -18,9 +18,22 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <svg class="site-filters" aria-hidden="true" focusable="false">
+      <filter id="yq-liquid-metal-edge" x="-75%" y="-75%" width="250%" height="250%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="blur" />
+        <feColorMatrix
+          in="blur"
+          type="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6"
+          result="goo"
+        />
+        <feColorMatrix in="goo" type="saturate" values="1.65" result="saturated" />
+        <feComposite in="saturated" in2="SourceGraphic" operator="over" />
+      </filter>
+    </svg>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="YOUTH Q ホーム">
-        <span class="brand-mark">YQ</span>
+        <span class="brand-mark"><span class="brand-mark-text">YQ</span></span>
         <span class="brand-copy">
           <strong>YOUTH Q</strong>
           <small>あるある質問にこたえる</small>
