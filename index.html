@@ -18,19 +18,6 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <svg class="site-filters" aria-hidden="true" focusable="false">
-      <filter id="yq-liquid-metal-edge" x="-75%" y="-75%" width="250%" height="250%" color-interpolation-filters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="blur" />
-        <feColorMatrix
-          in="blur"
-          type="matrix"
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6"
-          result="goo"
-        />
-        <feColorMatrix in="goo" type="saturate" values="1.65" result="saturated" />
-        <feComposite in="saturated" in2="SourceGraphic" operator="over" />
-      </filter>
-    </svg>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="YOUTH Q ホーム">
         <span class="brand-mark"><span class="brand-mark-text">YQ</span></span>
@@ -149,19 +136,29 @@
           <p class="eyebrow">Ask next</p>
           <h2 id="ask-title">ここにない質問も、置いていけます。</h2>
           <p>
-            送信はデモ表示です。実際に使う時は、フォーム送信先やGoogleフォームへのリンクに差し替えられます。
+            まだ答えが見つからないモヤモヤも、ここに置いていけます。
+            回答を公開したときにお知らせできるよう、メールアドレスも入力してください。
           </p>
         </div>
-        <form class="ask-form">
+        <form class="ask-form" name="youth-question" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="youth-question" />
+          <p class="form-trap">
+            <label>入力しないでください <input name="bot-field" /></label>
+          </p>
           <label>
             ニックネーム
-            <input type="text" name="name" placeholder="例: みなと" />
+            <input type="text" name="name" placeholder="例: みなと" required />
+          </label>
+          <label>
+            メールアドレス
+            <input type="email" name="email" placeholder="例: youth@example.com" autocomplete="email" required />
           </label>
           <label>
             聞きたいこと
-            <textarea name="question" rows="5" placeholder="例: 信じたいのに疑ってしまうのは悪いこと？"></textarea>
+            <textarea name="question" rows="5" placeholder="例: 信じたいのに疑ってしまうのは悪いこと？" required></textarea>
           </label>
           <button type="submit">質問を送る</button>
+          <small class="form-privacy">入力されたメールアドレスは、質問への回答に関する連絡にのみ使用します。</small>
           <p class="form-note" aria-live="polite"></p>
         </form>
       </section>
@@ -169,7 +166,10 @@
 
     <footer class="site-footer">
       <strong>YOUTH Q</strong>
-      <span>Black line art, big type, small honest answers.</span>
+      <div class="site-footer-rights">
+        <span>© 2026 YOUTH Q. All rights reserved.</span>
+        <span>聖書 新改訳 ©2003 新日本聖書刊行会</span>
+      </div>
     </footer>
 
     <template id="faq-template">

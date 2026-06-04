@@ -92,19 +92,45 @@ searchInput?.addEventListener("input", () => {
   renderFaqs();
 });
 
-askForm?.addEventListener("submit", (event) => {
+askForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(askForm);
   const name = String(formData.get("name") || "").trim();
+  const email = String(formData.get("email") || "").trim();
   const question = String(formData.get("question") || "").trim();
+  const button = askForm.querySelector('button[type="submit"]');
 
-  if (!name || !question) {
-    formNote.textContent = "ニックネームと質問を入力してください。";
+  if (!name || !email || !question) {
+    formNote.textContent = "ニックネーム、メールアドレス、質問を入力してください。";
     return;
   }
 
-  formNote.textContent = "質問を受け取りました。次のFAQ候補として表示できる形です。";
-  askForm.reset();
+  if (window.location.protocol === "file:") {
+    formNote.textContent = "送信機能は公開サイトで利用できます。入力内容はまだ送信されていません。";
+    return;
+  }
+
+  button?.setAttribute("aria-busy", "true");
+  formNote.textContent = "送信しています。";
+
+  try {
+    const response = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Question form failed: ${response.status}`);
+    }
+
+    formNote.textContent = "質問を受け取りました。ありがとうございます。";
+    askForm.reset();
+  } catch (error) {
+    formNote.textContent = "送信できませんでした。少し時間をおいて、もう一度試してください。";
+  } finally {
+    button?.removeAttribute("aria-busy");
+  }
 });
 
 exportPdfButton?.addEventListener("click", async () => {
@@ -598,7 +624,10 @@ function buildExportSheet(faq) {
   meta.textContent = formatFaqMeta(faq);
   title.textContent = withKinsoku(faq.question);
   scriptureHeading.textContent = "みことば引用";
-  license.textContent = "※聖書 新改訳 ©2003 新日本聖書刊行会";
+  license.textContent =
+    "© 2026 YOUTH Q. All rights reserved.\n" +
+    "本資料の回答文・デザインの無断転載、再配布を禁じます。\n" +
+    "聖書 新改訳 ©2003 新日本聖書刊行会";
 
   brand.append(brandMark, brandText);
   headerTop.append(brand, meta);
@@ -698,6 +727,7 @@ function renderPdfCanvas(faq) {
   drawPdfBackground(ctx, page);
   drawPdfHeader(ctx, faq, page, layout);
   drawPdfColumns(ctx, page, layout);
+  drawPdfRights(ctx, page);
 
   return canvas;
 }
@@ -950,10 +980,19 @@ function drawScriptureBlocks(ctx, scriptures, x, y, width, maxHeight) {
     currentY += block.textLines.length * scriptures.bodyLineHeight + 18 + extraGap;
   });
 
+}
+
+function drawPdfRights(ctx, page) {
+  const rights = [
+    "© 2026 YOUTH Q. All rights reserved.",
+    "本資料の回答文・デザインの無断転載、再配布を禁じます。",
+    "聖書 新改訳 ©2003 新日本聖書刊行会",
+  ];
+
   ctx.fillStyle = "rgba(41, 49, 61, 0.72)";
   ctx.font = "700 12px 'Noto Sans JP', sans-serif";
   ctx.textAlign = "right";
-  ctx.fillText("※聖書 新改訳 ©2003 新日本聖書刊行会", x + width, y + maxHeight + 14);
+  drawCanvasLines(ctx, rights, page.width - page.margin, page.height - 58, 17, "right");
   ctx.textAlign = "left";
 }
 
