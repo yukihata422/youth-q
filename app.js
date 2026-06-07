@@ -626,7 +626,6 @@ function buildExportSheet(faq) {
   scriptureHeading.textContent = "みことば引用";
   license.textContent =
     "© 2026 YOUTH Q. All rights reserved.\n" +
-    "本資料の回答文・デザインの無断転載、再配布を禁じます。\n" +
     "聖書 新改訳 ©2003 新日本聖書刊行会";
 
   brand.append(brandMark, brandText);
@@ -985,7 +984,6 @@ function drawScriptureBlocks(ctx, scriptures, x, y, width, maxHeight) {
 function drawPdfRights(ctx, page) {
   const rights = [
     "© 2026 YOUTH Q. All rights reserved.",
-    "本資料の回答文・デザインの無断転載、再配布を禁じます。",
     "聖書 新改訳 ©2003 新日本聖書刊行会",
   ];
 

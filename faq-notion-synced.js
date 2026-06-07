@@ -2938,8 +2938,8 @@
   {
     "id": "notion-3754a4d5c3048024b02bc201dce17575",
     "number": 47,
-    "category": "faith",
-    "label": "信仰",
+    "category": "life",
+    "label": "生活",
     "source": "notion",
     "sourceUrl": "https://www.notion.so/3754a4d5c3048024b02bc201dce17575",
     "question": "なんで勉強するの？",
@@ -3005,8 +3005,8 @@
   {
     "id": "notion-3784a4d5c304802e87d0c7b3adaae65f",
     "number": 48,
-    "category": "faith",
-    "label": "信仰",
+    "category": "future",
+    "label": "これから",
     "source": "notion",
     "sourceUrl": "https://www.notion.so/3784a4d5c304802e87d0c7b3adaae65f",
     "question": "自分の未来はもう決められているの？",

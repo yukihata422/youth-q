@@ -1792,6 +1792,481 @@ body.has-pdf-preview {
   color: #ffffff;
 }
 
+.archive-main {
+  min-height: calc(100vh - 74px);
+  padding: clamp(28px, 6vw, 72px) clamp(14px, 5vw, 72px);
+  background:
+    radial-gradient(circle at 14% 18%, rgba(255, 230, 129, 0.34), transparent 24%),
+    radial-gradient(circle at 86% 18%, rgba(158, 231, 246, 0.28), transparent 26%),
+    radial-gradient(circle at 78% 82%, rgba(255, 172, 207, 0.22), transparent 24%);
+}
+
+.archive-login,
+.archive-content {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.archive-login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  min-height: min(720px, calc(100vh - 170px));
+}
+
+.archive-login h1,
+.archive-heading h1 {
+  width: auto;
+  max-width: none;
+  margin: 0 0 18px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  font-size: clamp(3rem, 8vw, 6.8rem);
+  line-height: 1;
+  white-space: normal;
+  animation: none;
+}
+
+.archive-login p,
+.archive-heading p,
+.archive-category-heading p {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.archive-login-form,
+.archive-download-form {
+  display: grid;
+  gap: 14px;
+  border: 2px solid var(--line);
+  background:
+    radial-gradient(circle at 86% 16%, rgba(255, 230, 129, 0.62), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 251, 255, 0.94));
+  box-shadow: 8px 8px 0 rgba(17, 17, 17, 0.16);
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.archive-login-form label,
+.archive-download-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+}
+
+.archive-login-form input,
+.archive-download-form input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  outline: 0;
+}
+
+.archive-login-form button,
+.archive-logout,
+.archive-download-form button,
+.archive-close {
+  min-height: 46px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.archive-login-form button,
+.archive-download-form button {
+  min-height: 54px;
+}
+
+.archive-login-form button:hover,
+.archive-login-form button:focus-visible,
+.archive-download-form button:hover,
+.archive-download-form button:focus-visible {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.archive-login-note,
+.archive-download-note {
+  min-height: 1.6em;
+  margin: 0;
+  color: #26333b;
+  font-weight: 900;
+}
+
+.archive-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: clamp(28px, 5vw, 52px);
+}
+
+.archive-logout {
+  flex: 0 0 auto;
+  padding: 0 16px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 4px 4px 0 rgba(158, 231, 246, 0.55);
+}
+
+.archive-category-section {
+  margin-top: clamp(34px, 6vw, 68px);
+}
+
+.archive-category-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px 22px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+.archive-category-heading .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: -6px;
+}
+
+.archive-category-heading h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 4.4rem);
+  line-height: 1;
+}
+
+.archive-category-heading p {
+  margin: 0 0 9px;
+  text-align: right;
+}
+
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.archive-drive-grid {
+  grid-template-columns: 1fr;
+}
+
+.archive-drive-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.7fr);
+  gap: clamp(18px, 4vw, 42px);
+  align-items: stretch;
+  min-height: 300px;
+  padding: clamp(20px, 4vw, 34px);
+  border: 2px solid var(--line);
+  background:
+    radial-gradient(circle at 86% 18%, rgba(255, 230, 129, 0.48), transparent 30%),
+    radial-gradient(circle at 18% 88%, rgba(158, 231, 246, 0.42), transparent 28%),
+    linear-gradient(135deg, #fffdf8, #f8fbff);
+  box-shadow: 8px 8px 0 rgba(17, 17, 17, 0.14);
+}
+
+.archive-drive-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.archive-drive-copy strong {
+  display: block;
+  max-width: 9em;
+  margin: 16px 0 14px;
+  font-size: clamp(2.2rem, 5vw, 5.2rem);
+  font-weight: 900;
+  line-height: 0.98;
+}
+
+.archive-drive-copy p {
+  max-width: 34em;
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+.archive-drive-form {
+  display: grid;
+  gap: 14px;
+  align-self: center;
+  padding: 18px;
+  border: 2px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 20px 38px rgba(42, 49, 56, 0.14),
+    0 7px 0 rgba(158, 231, 246, 0.55);
+}
+
+.archive-drive-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+}
+
+.archive-drive-form input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  outline: 0;
+}
+
+.archive-drive-form button {
+  min-height: 54px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.archive-drive-form button:hover,
+.archive-drive-form button:focus-visible {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.archive-drive-form button[aria-busy="true"] {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.archive-drive-note {
+  min-height: 1.6em;
+  margin: 0;
+  color: #26333b;
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.archive-card {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 2px solid var(--line);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.12);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.archive-card:nth-child(3n + 1) {
+  background:
+    radial-gradient(circle at 84% 16%, rgba(255, 230, 129, 0.42), transparent 30%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.archive-card:nth-child(3n + 2) {
+  background:
+    radial-gradient(circle at 86% 18%, rgba(158, 231, 246, 0.42), transparent 30%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.archive-card:nth-child(3n + 3) {
+  background:
+    radial-gradient(circle at 86% 18%, rgba(255, 172, 207, 0.34), transparent 30%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.archive-card:hover,
+.archive-card:focus-visible {
+  background: #ffffff;
+  box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.16);
+  transform: translate(-3px, -3px);
+}
+
+.archive-card-image {
+  display: grid;
+  aspect-ratio: 4 / 3;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  background: var(--paper);
+}
+
+.archive-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.archive-card-label {
+  width: fit-content;
+  color: var(--muted);
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.archive-card strong {
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.archive-card small {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+.archive-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 22px;
+  border: 2px dashed var(--line);
+  background: var(--cream);
+  font-weight: 900;
+}
+
+.archive-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 3vw, 34px);
+}
+
+.archive-modal[hidden] {
+  display: none;
+}
+
+body.has-archive-modal {
+  overflow: hidden;
+}
+
+.archive-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 230, 129, 0.28), transparent 30%),
+    rgba(17, 17, 17, 0.55);
+  backdrop-filter: blur(10px);
+}
+
+.archive-dialog {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1120px, 96vw);
+  max-height: min(92vh, 900px);
+  border: 2px solid var(--line);
+  background: var(--paper);
+  box-shadow: 12px 12px 0 rgba(158, 231, 246, 0.72);
+  animation: archive-dialog-in 220ms ease both;
+}
+
+.archive-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  border-bottom: 2px solid var(--line);
+}
+
+.archive-dialog-header h2 {
+  margin: 0;
+  font-size: clamp(1.3rem, 2.6vw, 2.35rem);
+  line-height: 1.18;
+}
+
+.archive-close {
+  width: 42px;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1.3rem;
+}
+
+.archive-dialog-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.44fr);
+  gap: 18px;
+  min-height: 0;
+  padding: 18px;
+  overflow: auto;
+  background:
+    linear-gradient(90deg, rgba(158, 231, 246, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(255, 172, 207, 0.1) 1px, transparent 1px),
+    #f8fafb;
+  background-size: 28px 28px;
+}
+
+.archive-preview {
+  display: grid;
+  min-height: 420px;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  background: #ffffff;
+}
+
+.archive-preview img,
+.archive-preview iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+}
+
+.archive-preview iframe {
+  min-height: 620px;
+}
+
+.archive-download-form {
+  align-self: start;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(255, 230, 129, 0.52), transparent 32%),
+    linear-gradient(135deg, #ffffff, #f5fbff);
+}
+
+.archive-modal-caption {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.75;
+}
+
+.archive-download-form button[aria-busy="true"] {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+@keyframes archive-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .policy-main {
   min-height: calc(100vh - 74px);
   padding: clamp(28px, 6vw, 76px) clamp(14px, 5vw, 72px);
@@ -1856,7 +2331,24 @@ body.has-pdf-preview {
 
 @media (max-width: 980px) {
   .site-nav {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .site-nav a:not(.archive-nav-link) {
     display: none;
+  }
+
+  .archive-nav-link {
+    display: inline-grid;
+    min-height: 34px;
+    place-items: center;
+    padding: 0 10px;
+    border: 2px solid var(--line);
+    background: var(--yellow);
+    color: var(--ink);
+    box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.12);
+    font-size: 0.78rem;
   }
 
   .hero,
@@ -1970,6 +2462,27 @@ body.has-pdf-preview {
   .scripture-column {
     border-top: 2px solid var(--line);
     border-left: 0;
+  }
+
+  .archive-login {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .archive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-drive-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-dialog-body {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-preview {
+    min-height: min(62vh, 520px);
   }
 
   .scripture-ref-button {
@@ -2518,6 +3031,79 @@ body.has-pdf-preview {
   .site-footer-rights {
     justify-items: start;
     text-align: left;
+  }
+
+  .archive-main {
+    padding: 28px 12px 56px;
+  }
+
+  .archive-login h1,
+  .archive-heading h1 {
+    font-size: clamp(2.35rem, 12vw, 4.2rem);
+  }
+
+  .archive-heading {
+    display: grid;
+    gap: 16px;
+  }
+
+  .archive-logout {
+    justify-self: start;
+  }
+
+  .archive-category-heading {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .archive-category-heading p {
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .archive-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .archive-drive-panel {
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .archive-drive-copy strong {
+    max-width: none;
+    font-size: clamp(2rem, 11vw, 3.1rem);
+    line-height: 1.03;
+  }
+
+  .archive-drive-form {
+    padding: 14px;
+  }
+
+  .archive-card {
+    padding: 12px;
+  }
+
+  .archive-dialog {
+    width: min(100%, 94vw);
+    max-height: 90vh;
+  }
+
+  .archive-dialog-header {
+    padding: 14px;
+  }
+
+  .archive-dialog-body {
+    padding: 12px;
+  }
+
+  .archive-preview {
+    min-height: 320px;
+  }
+
+  .archive-download-form {
+    box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.12);
   }
 }
 

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>資料アーカイブ | YOUTH Q</title>
+    <meta
+      name="description"
+      content="YOUTH Qのスライド、PNG、PDFなどの資料をカテゴリ別にまとめたアーカイブページです。"
+    />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="archive-page">
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="YOUTH Q ホーム">
+        <span class="brand-mark"><span class="brand-mark-text">YQ</span></span>
+        <span class="brand-copy">
+          <strong>YOUTH Q</strong>
+          <small>あるある質問にこたえる</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="主要ナビゲーション">
+        <a href="./index.html#questions">質問を見る</a>
+        <a href="./index.html#themes">テーマ</a>
+        <a class="archive-nav-link" href="./archive.html" aria-current="page">資料アーカイブ</a>
+      </nav>
+    </header>
+
+    <main class="archive-main">
+      <section class="archive-login" aria-labelledby="archive-login-title">
+        <div>
+          <p class="eyebrow">Members archive</p>
+          <h1 id="archive-login-title">資料アーカイブ</h1>
+          <p>
+            スライド、PNG、PDFなどの資料をまとめて置いておくページです。
+            IDとパスワードを入力すると閲覧できます。
+          </p>
+        </div>
+        <form class="archive-login-form">
+          <label>
+            ID
+            <input type="text" name="userId" autocomplete="username" required />
+          </label>
+          <label>
+            パスワード
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit">アーカイブに入る</button>
+          <p class="archive-login-note" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="archive-content" aria-labelledby="archive-title" hidden>
+        <div class="archive-heading">
+          <div>
+            <p class="eyebrow">Resource shelf</p>
+            <h1 id="archive-title">資料アーカイブ</h1>
+            <p>
+              説教スライドはGoogle Driveで管理します。フォルダを開く前に、お名前とメールアドレスを記録します。
+            </p>
+          </div>
+          <button class="archive-logout" type="button">ログアウト</button>
+        </div>
+        <div class="archive-categories"></div>
+      </section>
+    </main>
+
+    <div class="archive-modal" aria-hidden="true" hidden>
+      <div class="archive-modal-backdrop" data-archive-close></div>
+      <section
+        class="archive-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="archive-modal-title"
+      >
+        <header class="archive-dialog-header">
+          <div>
+            <p class="eyebrow archive-modal-category"></p>
+            <h2 id="archive-modal-title"></h2>
+          </div>
+          <button class="archive-close" type="button" data-archive-close aria-label="閉じる">×</button>
+        </header>
+        <div class="archive-dialog-body">
+          <div class="archive-preview"></div>
+          <form
+            class="archive-download-form"
+            name="archive-download"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+          >
+            <input type="hidden" name="form-name" value="archive-download" />
+            <input type="hidden" name="itemTitle" />
+            <input type="hidden" name="itemFile" />
+            <input type="hidden" name="category" />
+            <p class="form-trap">
+              <label>入力しないでください <input name="bot-field" /></label>
+            </p>
+            <p class="archive-modal-caption"></p>
+            <label>
+              お名前
+              <input type="text" name="name" placeholder="例: 山田 太郎" autocomplete="name" required />
+            </label>
+            <label>
+              メールアドレス
+              <input type="email" name="email" placeholder="例: youth@example.com" autocomplete="email" required />
+            </label>
+            <button type="submit">ダウンロードする</button>
+            <p class="archive-download-note" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <strong>YOUTH Q</strong>
+      <div class="site-footer-rights">
+        <span>© 2026 YOUTH Q. All rights reserved.</span>
+        <span>聖書 新改訳 ©2003 新日本聖書刊行会</span>
+      </div>
+    </footer>
+
+    <script src="./archive-data.js"></script>
+    <script src="./archive.js"></script>
+  </body>
+</html>

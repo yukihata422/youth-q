@@ -16,6 +16,12 @@
   - レイアウト、タイポグラフィ、ラインアート風の配色、レスポンシブ表示を定義します。
 - `/Users/yukihata/Documents/Playground/app.js`
   - 質問検索、カテゴリ切り替え、ティッカー生成、読み物ビュー表示、フォームの簡易メッセージを担当します。
+- `/Users/yukihata/Documents/Playground/archive.html`
+  - スライド、PNG、PDFなどの資料アーカイブページです。簡易ID/パスワードで表示を切り替えます。
+- `/Users/yukihata/Documents/Playground/archive-data.js`
+  - 資料アーカイブに表示するカテゴリ、サムネイル、説明文、ダウンロードファイルのパスを管理します。
+- `/Users/yukihata/Documents/Playground/archive.js`
+  - アーカイブのログイン表示、プレビュー表示、ダウンロード前の名前・メールアドレス記録を担当します。
 
 ## 質問ドキュメントの管理方針
 
@@ -67,3 +73,14 @@ NOTION_TOKEN=secret_xxx NOTION_DATABASE_ID=35f4a4d5c3048093b9f4fb15ba5dd0d5 node
 ## 表示方法
 
 `/Users/yukihata/Documents/Playground/index.html` をブラウザで開くと表示できます。
+
+## 資料アーカイブ
+
+`/Users/yukihata/Documents/Playground/archive.html` が資料アーカイブページです。
+
+初期ログイン:
+
+- ID: `admin`
+- パスワード: `chchgrth`
+
+資料を追加する場合は、PDF、PNG、JPEGなどのファイルを `/Users/yukihata/Documents/Playground/assets/archive/` に置き、`archive-data.js` の `items` に追加します。ダウンロード時のお名前とメールアドレスは、公開サイト上ではNetlify Formsの `archive-download` に記録されます。

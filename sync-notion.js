@@ -314,7 +314,7 @@ function parseNumberLike(value) {
 function pickCategory(question, tags) {
   const text = `${question} ${tags.join(" ")}`;
 
-  if (/(これから|進路|将来|仕事|夢|死後|天国|地獄|救いを失う|希望)/.test(text)) {
+  if (/(これから|進路|将来|未来|仕事|夢|死後|天国|地獄|救いを失う|希望)/.test(text)) {
     return "future";
   }
 
@@ -322,7 +322,7 @@ function pickCategory(question, tags) {
     return "church";
   }
 
-  if (/(生活|友だち|SNS|付き合|恋愛|彼氏|彼女|学校|おしゃれ|下ネタ|推し|青春)/.test(text)) {
+  if (/(生活|友だち|SNS|付き合|恋愛|彼氏|彼女|学校|勉強|おしゃれ|下ネタ|推し|青春)/.test(text)) {
     return "life";
   }
 

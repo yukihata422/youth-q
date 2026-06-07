@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">ユース資料 サンプル</title>
+  <desc id="desc">YOUTH Qの資料アーカイブ用サンプルサムネイル</desc>
+  <rect width="1200" height="800" fill="#f8fbff"/>
+  <path d="M0 0h1200v800H0z" fill="none" stroke="#111" stroke-width="18"/>
+  <rect x="0" y="560" width="1200" height="240" fill="#c8b5ff" opacity=".55"/>
+  <circle cx="984" cy="194" r="128" fill="#ffaccf" opacity=".7"/>
+  <text x="78" y="132" fill="#5f6572" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">YOUTH</text>
+  <text x="78" y="326" fill="#111" font-family="'Noto Sans JP', sans-serif" font-size="94" font-weight="900">ユース資料</text>
+  <text x="84" y="408" fill="#5f6572" font-family="'Noto Sans JP', sans-serif" font-size="38" font-weight="700">分級・小グループ・配布用</text>
+  <circle cx="764" cy="512" r="82" fill="#111"/>
+  <circle cx="936" cy="512" r="82" fill="#111"/>
+  <path d="M682 654c42-78 92-116 156-116s113 38 154 116" fill="none" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+</svg>
