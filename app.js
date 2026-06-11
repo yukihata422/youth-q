@@ -16,7 +16,6 @@ const formNote = document.querySelector(".form-note");
 const tickerTrack = document.querySelector(".ticker-track");
 const heroBoard = document.querySelector(".hero-board");
 const heroPanelRoot = document.querySelector(".hero-panels");
-const heroTitle = document.querySelector("#hero-title");
 const readerSection = document.querySelector("#reader");
 const readerTag = document.querySelector(".reader-tag");
 const readerTitle = document.querySelector("#reader-title");
@@ -33,60 +32,6 @@ let activeCategory = "all";
 let activeQuery = "";
 let activeFaqId = faqs[0]?.id || "";
 let pendingPdf = null;
-let activeHeroTitle = "";
-
-const heroTitleVariants = [
-  "そのモヤモヤ、聞いていい。",
-  "知っておくと、ラクになるかも。",
-  "ひとりで抱えなくていい。",
-  "わからないままでも、聞いていい。",
-  "その疑問、なかったことにしない。",
-  "その問いから、はじめよう。",
-  "信じてても、迷う日はある。",
-  "悩む→求める→知る→見える",
-];
-
-function setRandomHeroTitle() {
-  if (!heroTitle || !heroTitleVariants.length) {
-    return;
-  }
-
-  activeHeroTitle = heroTitleVariants[Math.floor(Math.random() * heroTitleVariants.length)];
-  applyHeroTitleSizing();
-}
-
-function applyHeroTitleSizing() {
-  if (!heroTitle || !activeHeroTitle) {
-    return;
-  }
-
-  const parentWidth = heroTitle.parentElement?.clientWidth || window.innerWidth;
-  const availableWidth = Math.max(240, Math.min(parentWidth, window.innerWidth - 28));
-  const previousAnimation = heroTitle.style.animation;
-  const previousWidth = heroTitle.style.width;
-  const previousMaxWidth = heroTitle.style.maxWidth;
-  const steps = Math.max(activeHeroTitle.length, 12);
-
-  heroTitle.textContent = activeHeroTitle;
-  heroTitle.style.setProperty("--hero-title-scale", "1");
-  heroTitle.style.animation = "none";
-  heroTitle.style.width = "max-content";
-  heroTitle.style.maxWidth = "none";
-
-  const measuredWidth = Math.ceil(heroTitle.getBoundingClientRect().width);
-  const scale = Math.max(0.68, Math.min(1, availableWidth / Math.max(measuredWidth, 1)));
-  const targetWidth = Math.min(Math.ceil(measuredWidth * scale), availableWidth);
-
-  heroTitle.style.setProperty("--hero-title-scale", String(scale));
-  heroTitle.style.setProperty("--hero-title-width", `${targetWidth}px`);
-  heroTitle.style.setProperty("--hero-title-steps", steps);
-  heroTitle.style.animation = previousAnimation;
-  heroTitle.style.width = previousWidth;
-  heroTitle.style.maxWidth = previousMaxWidth;
-}
-
-window.addEventListener("resize", applyHeroTitleSizing);
-document.fonts?.ready.then(applyHeroTitleSizing);
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
@@ -441,14 +386,6 @@ function renderFaqs() {
       renderReader(faq);
       readerSection?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-
-    if (faq.slug) {
-      const pageLink = document.createElement("a");
-      pageLink.className = "faq-page-link";
-      pageLink.href = getFaqPageHref(faq.slug);
-      pageLink.textContent = "この質問のページへ";
-      node.appendChild(pageLink);
-    }
 
     faqList.appendChild(node);
   });
@@ -1183,14 +1120,6 @@ function formatFaqMeta(faq) {
   return label;
 }
 
-function getFaqPageHref(slug) {
-  if (window.location.protocol === "file:") {
-    return `./q/${slug}/index.html`;
-  }
-
-  return `/q/${slug}/`;
-}
-
 function isValidScriptureReference(value) {
   const normalized = normalizeReference(value);
   return /\d/.test(normalized) && normalized.length >= 4;
@@ -1262,7 +1191,6 @@ function escapeHtml(value) {
   return span.innerHTML;
 }
 
-setRandomHeroTitle();
 renderTicker();
 renderHeroPanels();
 renderThemePreviews();

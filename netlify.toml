@@ -1,13 +1,3 @@
 [build]
   publish = "."
-  command = "npm run build"
-
-[[redirects]]
-  from = "/archive.html"
-  to = "/archive"
-  status = 301
-
-[[redirects]]
-  from = "/archive"
-  to = "/archive.html"
-  status = 200
+  command = ""
