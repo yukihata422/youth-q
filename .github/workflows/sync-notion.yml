@@ -37,13 +37,13 @@ jobs:
 
       - name: Commit synced content
         run: |
-          if git diff --quiet -- faq-notion-synced.js; then
+          if git diff --quiet -- faq-notion-synced.js data/questions.json data/slug-map.json; then
             echo "No Notion content changes."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add faq-notion-synced.js
+          git add faq-notion-synced.js data/questions.json data/slug-map.json
           git commit -m "Sync Notion FAQ content"
           git push

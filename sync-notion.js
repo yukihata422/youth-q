@@ -4,6 +4,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const SYNCED_FILE = path.join(__dirname, "faq-notion-synced.js");
+const DATA_DIR = path.join(__dirname, "data");
+const QUESTIONS_FILE = path.join(DATA_DIR, "questions.json");
+const SLUG_MAP_FILE = path.join(DATA_DIR, "slug-map.json");
 const NOTION_VERSION = "2022-06-28";
 const DEFAULT_DATABASE_ID = "35f4a4d5c3048093b9f4fb15ba5dd0d5";
 const DEFAULT_PARENT_TITLE = "そのモヤモヤ、聞いて良い_コンテンツ";
@@ -25,11 +28,16 @@ if (!token) {
 async function main() {
   const pages = await queryDatabasePages(databaseId);
   const notionFaqs = [];
+  const slugMap = readSlugMap();
 
   for (const page of pages) {
     const blocks = await listBlocks(page.id);
-    notionFaqs.push(buildFaq(page, blocks));
+    const faq = buildFaq(page, blocks);
+    faq.slug = resolveSlug(faq, readSlugProperty(page), slugMap);
+    notionFaqs.push(faq);
   }
+
+  validateUniqueSlugs(notionFaqs);
 
   notionFaqs.sort((a, b) => {
     if (Number.isFinite(a.number) && Number.isFinite(b.number)) {
@@ -39,8 +47,12 @@ async function main() {
     return a.question.localeCompare(b.question, "ja");
   });
 
+  ensureDataDir();
   fs.writeFileSync(SYNCED_FILE, formatSyncedFile(notionFaqs), "utf8");
+  fs.writeFileSync(QUESTIONS_FILE, `${JSON.stringify(notionFaqs, null, 2)}\n`, "utf8");
+  fs.writeFileSync(SLUG_MAP_FILE, `${JSON.stringify(sortObject(slugMap), null, 2)}\n`, "utf8");
   console.log(`${notionFaqs.length}件のNotionコンテンツを ${path.basename(SYNCED_FILE)} に反映しました。`);
+  console.log(`${path.relative(__dirname, QUESTIONS_FILE)} と ${path.relative(__dirname, SLUG_MAP_FILE)} を更新しました。`);
 }
 
 async function queryDatabasePages(id) {
@@ -259,6 +271,42 @@ function readTags(page) {
   return (tagProperty?.multi_select || []).map((tag) => tag.name);
 }
 
+function readSlugProperty(page) {
+  const slugEntry = Object.entries(page.properties || {}).find(
+    ([name]) => name.trim().toLowerCase() === "slug",
+  );
+
+  if (!slugEntry) {
+    return "";
+  }
+
+  return readTextValue(slugEntry[1]);
+}
+
+function readTextValue(property) {
+  if (!property) {
+    return "";
+  }
+
+  if (property.type === "rich_text") {
+    return (property.rich_text || []).map((text) => text.plain_text || "").join("");
+  }
+
+  if (property.type === "title") {
+    return (property.title || []).map((text) => text.plain_text || "").join("");
+  }
+
+  if (property.type === "url") {
+    return property.url || "";
+  }
+
+  if (property.type === "formula" && property.formula?.type === "string") {
+    return property.formula.string || "";
+  }
+
+  return "";
+}
+
 function readEntryNumber(page) {
   const properties = Object.entries(page.properties || {});
   const candidates = properties
@@ -403,6 +451,145 @@ function joinParagraphs(current, next) {
 
 function compactPageId(id) {
   return String(id).replace(/-/g, "");
+}
+
+function ensureDataDir() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+function readSlugMap() {
+  if (!fs.existsSync(SLUG_MAP_FILE)) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(SLUG_MAP_FILE, "utf8"));
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch (error) {
+    throw new Error(`slug mapを読み込めませんでした: ${error.message}`);
+  }
+}
+
+function resolveSlug(faq, notionSlug, slugMap) {
+  if (slugMap[faq.id]) {
+    return normalizeSlug(slugMap[faq.id], faq.id);
+  }
+
+  const slug = normalizeSlug(notionSlug, faq.id) || generateSlug(faq);
+  slugMap[faq.id] = slug;
+  return slug;
+}
+
+function validateUniqueSlugs(faqs) {
+  const seen = new Map();
+
+  for (const faq of faqs) {
+    if (!faq.slug) {
+      throw new Error(`${faq.id} のslugが空です。`);
+    }
+
+    if (seen.has(faq.slug)) {
+      throw new Error(`slugが衝突しています: ${faq.slug} (${seen.get(faq.slug)} / ${faq.id})`);
+    }
+
+    seen.set(faq.slug, faq.id);
+  }
+}
+
+function normalizeSlug(value, id) {
+  const slug = String(value || "")
+    .normalize("NFKC")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-")
+    .slice(0, 56)
+    .replace(/-+$/g, "");
+
+  if (value && !slug) {
+    throw new Error(`${id} のSlugプロパティをURL用slugに変換できませんでした。`);
+  }
+
+  return slug;
+}
+
+function generateSlug(faq) {
+  const text = `${faq.question} ${faq.summary || ""} ${faq.label || ""}`;
+  const keywordMap = [
+    ["初詣", "hatsumode"],
+    ["神社", "shrine"],
+    ["旅行", "trip"],
+    ["洗礼", "baptism"],
+    ["キリスト", "christ"],
+    ["出会", "encounter"],
+    ["日曜日", "sunday"],
+    ["教会", "church"],
+    ["献金", "offering"],
+    ["試練", "trial"],
+    ["付き合", "dating"],
+    ["神様", "god"],
+    ["伝道", "evangelism"],
+    ["形式", "church-form"],
+    ["クリスチャン", "christian"],
+    ["聖霊", "holy-spirit"],
+    ["本物", "real-faith"],
+    ["偽物", "fake-faith"],
+    ["宗教", "religion"],
+    ["救い", "salvation"],
+    ["進路", "future-path"],
+    ["悪魔", "devil"],
+    ["自分", "identity"],
+    ["友だち", "friends"],
+    ["イエス", "jesus"],
+    ["天国", "heaven"],
+    ["旧約", "old-testament"],
+    ["おしゃれ", "fashion"],
+    ["占い", "fortune"],
+    ["地獄", "hell"],
+    ["推し", "idol"],
+    ["誘惑", "temptation"],
+    ["ディボーション", "devotion"],
+    ["仕事", "career"],
+    ["相談", "advice"],
+    ["昼食", "lunch"],
+    ["夢", "dream"],
+    ["礼拝", "worship"],
+    ["ネット", "online"],
+    ["ノンクリ", "nonchristian"],
+    ["戦争", "war"],
+    ["勉強", "study"],
+    ["未来", "future"],
+    ["将来", "future"],
+    ["死後", "afterlife"],
+    ["死ぬ", "death"],
+    ["SNS", "sns"],
+    ["祈り", "prayer"],
+    ["聖書", "bible"],
+    ["疑問", "doubt"],
+    ["生活", "life"],
+  ];
+  const tokens = [];
+
+  keywordMap.forEach(([pattern, token]) => {
+    if (text.includes(pattern) && !tokens.includes(token)) {
+      tokens.push(token);
+    }
+  });
+
+  if (tokens.length) {
+    return tokens.slice(0, 3).join("-");
+  }
+
+  const fallback = Number.isFinite(faq.number)
+    ? `question-${faq.number}`
+    : `question-${faq.id.replace(/^notion-/, "").slice(0, 8)}`;
+
+  return normalizeSlug(fallback, faq.id);
+}
+
+function sortObject(value) {
+  return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 function formatSyncedFile(notionFaqs) {

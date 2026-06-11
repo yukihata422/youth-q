@@ -87,14 +87,14 @@ button {
   width: 44px;
   height: 44px;
   place-items: center;
-  border: 1px solid rgba(17, 17, 17, 0.92);
+  border: 1px solid rgba(17, 17, 17, 0.82);
   border-radius: 50%;
   background:
     radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.55), transparent 34%),
     var(--yellow);
   box-shadow:
-    inset 0 0 0 2px rgba(17, 17, 17, 0.92),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.34),
+    inset 0 0 0 1px rgba(17, 17, 17, 0.82),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
     inset 0 -5px 9px rgba(17, 17, 17, 0.1),
     0 1px 0 rgba(255, 255, 255, 0.9);
   font-family: "Inter", sans-serif;
@@ -139,8 +139,8 @@ button {
     );
   filter: saturate(1.16) contrast(1.1) blur(0.04px);
   opacity: 0.86;
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.7px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.7px), #000 calc(100% - 2px));
   animation: yq-liquid-metal-flow 12000ms linear infinite;
   will-change: --yq-ripple-offset, transform;
 }
@@ -271,18 +271,21 @@ h2 {
 }
 
 h1 {
+  --hero-title-scale: 1;
+  --hero-title-steps: 25;
+  --hero-title-width: 13em;
   display: inline-block;
   width: 0;
-  max-width: none;
+  max-width: 100%;
   margin-bottom: 20px;
   padding-bottom: 0.08em;
   overflow: hidden;
   border-right: 0.08em solid var(--ink);
-  font-size: clamp(3rem, 6.5vw, 7.8rem);
+  font-size: calc(clamp(3rem, 6.5vw, 7.8rem) * var(--hero-title-scale));
   line-height: 1.12;
   white-space: nowrap;
   animation:
-    hero-typewriter 1.8s steps(25) 0.25s forwards,
+    hero-typewriter 1.8s steps(var(--hero-title-steps)) 0.25s forwards,
     hero-cursor-blink 720ms step-end infinite;
 }
 
@@ -714,7 +717,7 @@ h2 {
   }
 
   to {
-    width: 13em;
+    width: min(var(--hero-title-width), 100%);
   }
 }
 
@@ -1100,6 +1103,25 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.faq-page-link {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0 24px 16px auto;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+  box-shadow: 3px 3px 0 rgba(158, 231, 246, 0.5);
+}
+
+.faq-page-link:hover,
+.faq-page-link:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 4px 5px 0 rgba(158, 231, 246, 0.68);
 }
 
 .faq-hit[hidden] {
@@ -1792,6 +1814,185 @@ body.has-pdf-preview {
   color: #ffffff;
 }
 
+.question-page-main {
+  padding: clamp(28px, 5vw, 68px) clamp(18px, 5vw, 76px);
+}
+
+.question-page-shell,
+.question-page-related {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.question-page-shell {
+  border: 2px solid var(--line);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255, 230, 129, 0.4), transparent 24%),
+    radial-gradient(circle at 8% 96%, rgba(158, 231, 246, 0.28), transparent 20%),
+    rgba(255, 255, 255, 0.96);
+  box-shadow: 8px 8px 0 rgba(17, 17, 17, 0.12);
+}
+
+.question-page-hero {
+  padding: clamp(26px, 5vw, 54px);
+  border-bottom: 2px solid var(--line);
+}
+
+.question-page-hero h1 {
+  max-width: 980px;
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4.8rem);
+  line-height: 1.06;
+}
+
+.question-page-summary {
+  max-width: 860px;
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
+  font-weight: 800;
+}
+
+.question-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  gap: 0;
+}
+
+.question-page-answer,
+.question-page-scriptures {
+  padding: clamp(24px, 4vw, 46px);
+}
+
+.question-page-answer {
+  border-right: 2px solid var(--line);
+}
+
+.question-page-answer section + section,
+.question-page-scriptures article + article {
+  margin-top: 24px;
+}
+
+.question-page-answer h2,
+.question-page-scriptures h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.35;
+}
+
+.question-page-answer p,
+.question-page-scriptures p {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+  font-weight: 600;
+  line-break: strict;
+  line-height: 1.9;
+  white-space: pre-line;
+}
+
+.question-page-scriptures {
+  background: rgba(238, 248, 255, 0.9);
+}
+
+.question-page-scriptures article {
+  padding-top: 18px;
+  border-top: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.question-page-scriptures strong {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 900;
+}
+
+.question-page-license,
+.question-page-hint,
+.question-page-empty {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.question-page-license {
+  margin-top: 24px;
+  text-align: right;
+}
+
+.question-page-hint {
+  margin: 0;
+  padding: 18px clamp(24px, 4vw, 46px);
+  border-top: 2px solid var(--line);
+  background: rgba(255, 230, 129, 0.22);
+}
+
+.question-page-related {
+  margin-top: clamp(34px, 5vw, 64px);
+}
+
+.question-page-related h2 {
+  margin: 0 0 18px;
+  font-size: clamp(1.8rem, 4vw, 3.8rem);
+  line-height: 1.08;
+}
+
+.question-page-related-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.question-page-related-list a {
+  min-height: 150px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.1);
+}
+
+.question-page-related-list a span {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-family: "Inter", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.question-page-related-list a strong {
+  display: block;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  line-height: 1.35;
+}
+
+.question-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 1180px;
+  margin: 28px auto 0;
+}
+
+.question-page-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--line);
+  background: var(--yellow);
+  font-weight: 900;
+  box-shadow: 4px 4px 0 rgba(158, 231, 246, 0.65);
+}
+
+.question-page-actions a:nth-child(2) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
 .archive-main {
   min-height: calc(100vh - 74px);
   padding: clamp(28px, 6vw, 72px) clamp(14px, 5vw, 72px);
@@ -2330,6 +2531,20 @@ body.has-archive-modal {
 }
 
 @media (max-width: 980px) {
+  .question-page-grid,
+  .question-page-related-list {
+    grid-template-columns: 1fr;
+  }
+
+  .question-page-answer {
+    border-right: 0;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .question-page-license {
+    text-align: left;
+  }
+
   .site-nav {
     display: flex;
     margin-left: auto;
@@ -2473,8 +2688,30 @@ body.has-archive-modal {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .archive-drive-grid {
+    grid-template-columns: 1fr;
+  }
+
   .archive-drive-panel {
     grid-template-columns: 1fr;
+    gap: clamp(18px, 4vw, 32px);
+    padding: clamp(22px, 4vw, 34px);
+  }
+
+  .archive-drive-copy strong {
+    max-width: 11em;
+    font-size: clamp(2.8rem, 8vw, 5.2rem);
+  }
+
+  .archive-drive-copy p {
+    max-width: 34em;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .archive-drive-form {
+    width: 100%;
+    align-self: start;
   }
 
   .archive-dialog-body {
@@ -2675,11 +2912,11 @@ body.has-archive-modal {
   h1 {
     max-width: calc(100vw - 28px);
     margin-bottom: 12px;
-    font-size: clamp(1.66rem, 7.1vw, 2.35rem);
+    font-size: calc(clamp(1.66rem, 7.1vw, 2.35rem) * var(--hero-title-scale));
     line-height: 1.18;
     white-space: nowrap;
     animation:
-      hero-typewriter-mobile 1.45s steps(25) 0.25s forwards,
+      hero-typewriter-mobile 1.45s steps(var(--hero-title-steps)) 0.25s forwards,
       hero-cursor-blink 720ms step-end infinite;
   }
 
@@ -3067,6 +3304,7 @@ body.has-archive-modal {
   }
 
   .archive-drive-panel {
+    grid-template-columns: 1fr;
     min-height: 0;
     padding: 16px;
   }
@@ -3198,7 +3436,7 @@ body.has-archive-modal {
   }
 
   to {
-    width: min(14em, 100%);
+    width: min(var(--hero-title-width), 100%);
   }
 }
 
