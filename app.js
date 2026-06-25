@@ -6,17 +6,23 @@ const tickerQuestions = Array.isArray(content.tickerQuestions)
 const heroPanels = Array.isArray(content.heroPanels) ? content.heroPanels : [];
 
 const categoryButtons = document.querySelectorAll(".theme-card");
+const categoryTabButtons = document.querySelectorAll(".category-tab");
 const faqList = document.querySelector(".faq-list");
 const faqTemplate = document.querySelector("#faq-template");
 const searchForm = document.querySelector(".hero-search");
 const searchInput = document.querySelector("#question-search");
 const resultCount = document.querySelector(".result-count");
+const searchStatus = document.querySelector(".search-status");
+const entryLists = document.querySelectorAll(".entry-list");
 const askForm = document.querySelector(".ask-form");
 const formNote = document.querySelector(".form-note");
 const tickerTrack = document.querySelector(".ticker-track");
+const heroTitle = document.querySelector("#hero-title");
 const heroBoard = document.querySelector(".hero-board");
 const heroPanelRoot = document.querySelector(".hero-panels");
 const readerSection = document.querySelector("#reader");
+const mainRoot = document.querySelector("main");
+const siteFooter = document.querySelector(".site-footer");
 const readerTag = document.querySelector(".reader-tag");
 const readerTitle = document.querySelector("#reader-title");
 const readerBody = document.querySelector(".reader-body");
@@ -27,32 +33,125 @@ const pdfPreviewModal = document.querySelector(".pdf-preview-modal");
 const pdfPreviewImage = document.querySelector(".pdf-preview-image");
 const pdfDownloadButton = document.querySelector(".pdf-preview-download");
 const pdfCloseButtons = document.querySelectorAll("[data-pdf-close]");
+const readerNavButtons = document.querySelectorAll("[data-reader-action]");
 
 let activeCategory = "all";
 let activeQuery = "";
 let activeFaqId = faqs[0]?.id || "";
 let pendingPdf = null;
+let routeMode = "list";
+let lastListScrollY = 0;
+let routeTransitionTimer = null;
+const routeTransitionDuration = 860;
+
+const heroTitlePhrases = [
+  "そのモヤモヤ、聞いていい。",
+  "知っておくと、ラクになるかも。",
+  "ひとりで抱えなくていい。",
+  "わからないままでも、聞いていい。",
+  "その疑問、なかったことにしない。",
+  "その問いから、はじめよう。",
+  "信じてても、迷う日はある。",
+  "悩む→求める→知る→見える",
+];
+
+function setRandomHeroTitle() {
+  if (!heroTitle) {
+    return;
+  }
+
+  const phrase = heroTitlePhrases[Math.floor(Math.random() * heroTitlePhrases.length)];
+  const length = Array.from(phrase).length;
+
+  heroTitle.textContent = phrase;
+  heroTitle.style.setProperty("--hero-title-steps", String(Math.max(length, 1)));
+  heroTitle.style.setProperty("--hero-title-width", `${length + 0.55}em`);
+  heroTitle.classList.toggle("is-compact", length >= 15);
+}
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
-    const target = document.querySelector(link.getAttribute("href"));
+    const hash = link.getAttribute("href");
+    const target = document.querySelector(hash);
 
     if (!target) {
       return;
     }
 
     event.preventDefault();
+
+    if (routeMode === "detail") {
+      navigateToList({ replace: false, scrollTarget: hash });
+      return;
+    }
+
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
 categoryButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    activeCategory = button.dataset.category || "all";
-    categoryButtons.forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
+    setCategory(button.dataset.category || "all");
     renderFaqs();
     document.querySelector("#questions")?.scrollIntoView({ behavior: "smooth" });
+  });
+});
+
+categoryTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setCategory(button.dataset.category || "all");
+    renderFaqs();
+  });
+});
+
+searchStatus?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-clear-search]");
+
+  if (!button) {
+    return;
+  }
+
+  activeQuery = "";
+  if (searchInput) {
+    searchInput.value = "";
+  }
+  renderFaqs();
+  searchInput?.focus();
+});
+
+readerNavButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const faq = getActiveFaq();
+
+    if (!faq) {
+      return;
+    }
+
+    if (button.dataset.readerAction === "same-category") {
+      activeQuery = "";
+      if (searchInput) {
+        searchInput.value = "";
+      }
+      setCategory(faq.category || "all");
+      activeFaqId = faq.id;
+      renderFaqs();
+      navigateToList({ updateHistory: true });
+      return;
+    }
+
+    const visibleFaqs = getVisibleFaqs();
+
+    if (!visibleFaqs.length) {
+      return;
+    }
+
+    const currentIndex = Math.max(0, visibleFaqs.findIndex((item) => item.id === faq.id));
+    const nextFaq = visibleFaqs[(currentIndex + 1) % visibleFaqs.length] || faqs[0];
+
+    if (nextFaq) {
+      activeFaqId = nextFaq.id;
+      showQuestionRoute(nextFaq, { direction: "forward", updateHistory: true });
+    }
   });
 });
 
@@ -183,12 +282,9 @@ function renderTicker() {
       if (searchInput) {
         searchInput.value = "";
       }
-      categoryButtons.forEach((button) => {
-        button.classList.toggle("is-active", button.dataset.category === "all");
-      });
+      setCategory("all");
       renderFaqs();
-      renderReader(faq);
-      readerSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      navigateToFaq(faq);
     });
     tickerTrack.appendChild(item);
   });
@@ -208,14 +304,244 @@ function shuffleItems(items) {
   return shuffledItems;
 }
 
+function getFaqSlug(faq) {
+  if (Number.isFinite(Number(faq?.number))) {
+    return String(Number(faq.number));
+  }
+
+  const source = faq?.slug || faq?.id || faq?.question || "";
+  const clean = String(source)
+    .replace(/^notion-/, "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return clean || `question-${faqs.findIndex((item) => item.id === faq?.id) + 1 || 1}`;
+}
+
+function getFaqLegacySlug(faq) {
+  return String(faq?.slug || faq?.id || faq?.question || "")
+    .replace(/^notion-/, "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getFaqBySlug(slug) {
+  return faqs.find((faq) => getFaqSlug(faq) === slug || getFaqLegacySlug(faq) === slug);
+}
+
+function getFaqUrl(faq) {
+  const slug = getFaqSlug(faq);
+
+  if (window.location.protocol === "file:") {
+    return `#q-${slug}`;
+  }
+
+  return `/q/${slug}/`;
+}
+
+function getFaqFromCurrentUrl() {
+  const hashMatch = window.location.hash.match(/^#q-([a-z0-9-]+)$/);
+
+  if (hashMatch) {
+    return getFaqBySlug(hashMatch[1]);
+  }
+
+  const pathMatch = window.location.pathname.match(/\/q\/([^/]+)\/?$/);
+
+  if (pathMatch) {
+    return getFaqBySlug(decodeURIComponent(pathMatch[1]));
+  }
+
+  return null;
+}
+
+function setRouteAnimation(direction) {
+  if (!readerSection) {
+    return;
+  }
+
+  readerSection.classList.remove("slide-from-right", "slide-from-left");
+
+  if (!direction || direction === "none") {
+    return;
+  }
+
+  void readerSection.offsetWidth;
+  readerSection.classList.add(direction === "back" ? "slide-from-left" : "slide-from-right");
+}
+
+function showQuestionRoute(faq, { direction = "forward", updateHistory = true, replace = false } = {}) {
+  if (!faq) {
+    return;
+  }
+
+  const wasDetail = routeMode === "detail";
+
+  window.clearTimeout(routeTransitionTimer);
+  activeFaqId = faq.id;
+  renderReader(faq);
+
+  if (updateHistory) {
+    const state = { view: "question", faqId: faq.id };
+    const url = getFaqUrl(faq);
+    if (replace) {
+      window.history.replaceState(state, "", url);
+    } else {
+      window.history.pushState(state, "", url);
+    }
+  }
+
+  if (direction === "none" || wasDetail) {
+    routeMode = "detail";
+    mountFooterInReader();
+    document.body.classList.remove("is-routing-forward");
+    document.body.classList.add("is-question-route");
+    setRouteAnimation(direction);
+    resetReaderScroll();
+    return;
+  }
+
+  lastListScrollY = window.scrollY;
+  routeMode = "detail";
+  mountFooterInReader();
+  resetReaderScroll();
+  document.body.classList.remove("is-list-returning");
+  document.body.classList.add("is-question-route", "is-routing-forward");
+  setRouteAnimation("none");
+  window.requestAnimationFrame(resetReaderScroll);
+
+  routeTransitionTimer = window.setTimeout(() => {
+    window.requestAnimationFrame(() => {
+      document.body.classList.remove("is-routing-forward");
+      setRouteAnimation("none");
+      resetReaderScroll();
+    });
+  }, routeTransitionDuration);
+}
+
+function navigateToList({ updateHistory = true, replace = false } = {}) {
+  window.clearTimeout(routeTransitionTimer);
+  routeMode = "list";
+  document.body.classList.add("is-restoring-list-position");
+  mountFooterInPage();
+  renderFaqs();
+  document.body.classList.remove("is-question-route", "is-routing-forward");
+  document.body.classList.add("is-list-returning");
+  setRouteAnimation("back");
+
+  if (updateHistory) {
+    const state = { view: "list" };
+    const url = window.location.protocol === "file:" ? "#questions" : "/";
+    if (replace) {
+      window.history.replaceState(state, "", url);
+    } else {
+      window.history.pushState(state, "", url);
+    }
+  }
+
+  jumpToPageY(lastListScrollY);
+  window.requestAnimationFrame(() => {
+    document.body.classList.remove("is-restoring-list-position");
+  });
+  window.setTimeout(() => {
+    document.body.classList.remove("is-list-returning");
+  }, 520);
+}
+
+function navigateToFaq(faq) {
+  showQuestionRoute(faq, { direction: "forward", updateHistory: true });
+}
+
+window.addEventListener("popstate", () => {
+  const faq = getFaqFromCurrentUrl();
+
+  if (faq) {
+    showQuestionRoute(faq, { direction: "back", updateHistory: false });
+    return;
+  }
+
+  routeMode = "list";
+  document.body.classList.add("is-restoring-list-position");
+  mountFooterInPage();
+  renderFaqs();
+  document.body.classList.remove("is-question-route", "is-routing-forward");
+  document.body.classList.add("is-list-returning");
+  setRouteAnimation("back");
+  jumpToPageY(lastListScrollY);
+  window.requestAnimationFrame(() => {
+    document.body.classList.remove("is-restoring-list-position");
+  });
+  window.setTimeout(() => {
+    document.body.classList.remove("is-list-returning");
+  }, 520);
+});
+
+function jumpToPageY(top) {
+  const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+
+  document.documentElement.style.scrollBehavior = "auto";
+  window.scrollTo(0, Math.max(0, Number(top) || 0));
+  window.requestAnimationFrame(() => {
+    document.documentElement.style.scrollBehavior = previousScrollBehavior;
+  });
+}
+
+function resetReaderScroll() {
+  if (readerSection) {
+    readerSection.scrollTop = 0;
+  }
+}
+
+function mountFooterInReader() {
+  if (!readerSection || !siteFooter || siteFooter.parentElement === readerSection) {
+    return;
+  }
+
+  readerSection.appendChild(siteFooter);
+}
+
+function mountFooterInPage() {
+  if (!mainRoot || !siteFooter || siteFooter.parentElement === document.body) {
+    return;
+  }
+
+  mainRoot.insertAdjacentElement("afterend", siteFooter);
+}
+
 function resetCategoryForSearch() {
   if (!activeQuery) {
     return;
   }
 
-  activeCategory = "all";
-  categoryButtons.forEach((button) => {
-    button.classList.toggle("is-active", (button.dataset.category || "all") === "all");
+  setCategory("all");
+}
+
+function setCategory(category) {
+  activeCategory = category || "all";
+  document.querySelectorAll("[data-category]").forEach((button) => {
+    button.classList.toggle("is-active", (button.dataset.category || "all") === activeCategory);
+  });
+}
+
+function getVisibleFaqs() {
+  const normalizedQuery = normalizeSearchText(activeQuery);
+
+  return faqs.filter((faq) => {
+    const matchesCategory =
+      activeCategory === "all" || faq.category === activeCategory;
+    const matchesQuery =
+      !normalizedQuery ||
+      getSearchFields(faq).some((field) =>
+        normalizeSearchText(field.text).includes(normalizedQuery),
+      );
+
+    return matchesCategory && matchesQuery;
   });
 }
 
@@ -226,38 +552,39 @@ function renderHeroPanels() {
 
   heroPanelRoot.innerHTML = "";
 
-  heroPanels.forEach((panel) => {
-    const item = document.createElement("figure");
-    item.className = `panel ${panel.className || ""}`.trim();
+  const slideshow = document.createElement("figure");
+  slideshow.className = "hero-slideshow";
+  slideshow.setAttribute("aria-label", "YOUTH Q メインビジュアル");
+
+  heroPanels.forEach((panel, index) => {
+    const slideClass = panel.className ? panel.className.replace(/^panel-/, "slide-") : "";
+    const item = document.createElement("div");
+    item.className = `hero-slide ${slideClass} ${
+      panel.image ? "is-image" : "is-text"
+    }`.trim();
+    item.style.setProperty("--slide-index", String(index));
+    item.style.setProperty("--slide-delay", `${index * 6}s`);
 
     if (panel.image) {
-      item.classList.add("has-image");
       const image = document.createElement("img");
       image.src = panel.image;
       image.alt = panel.alt || panel.title || "";
 
-      if (panel.caption) {
-        item.classList.add("has-caption");
+      item.appendChild(image);
+
+      const captionText = panel.caption || panel.footerCaption;
+
+      if (captionText) {
+        item.dataset.caption = captionText;
         const caption = document.createElement("figcaption");
-        caption.className = "panel-caption";
-        caption.innerHTML = safeLineBreaks(panel.caption);
+        caption.className = "hero-slide-caption";
+        caption.innerHTML = safeLineBreaks(captionText);
         item.appendChild(caption);
       }
 
-      item.appendChild(image);
-
-      if (panel.footerCaption) {
-        const footerCaption = document.createElement("figcaption");
-        footerCaption.className = "panel-footer-caption";
-        footerCaption.innerHTML = safeLineBreaks(panel.footerCaption);
-        item.appendChild(footerCaption);
-      }
-
-      if (panel.className?.includes("panel-pink") && searchForm) {
-        item.appendChild(searchForm);
-      }
     } else {
       const title = document.createElement("strong");
+      title.className = "hero-slide-title";
       title.innerHTML = safeLineBreaks(panel.title || "Replace image");
 
       if (panel.className?.includes("panel-ink")) {
@@ -294,8 +621,14 @@ function renderHeroPanels() {
       }
     }
 
-    heroPanelRoot.appendChild(item);
+    slideshow.appendChild(item);
   });
+
+  if (searchForm) {
+    slideshow.appendChild(searchForm);
+  }
+
+  heroPanelRoot.appendChild(slideshow);
 }
 
 function bindHeroMotion() {
@@ -329,23 +662,15 @@ function renderFaqs() {
   }
 
   const normalizedQuery = normalizeSearchText(activeQuery);
-  const visibleFaqs = faqs.filter((faq) => {
-    const matchesCategory =
-      activeCategory === "all" || faq.category === activeCategory;
-    const matchesQuery =
-      !normalizedQuery ||
-      getSearchFields(faq).some((field) =>
-        normalizeSearchText(field.text).includes(normalizedQuery),
-      );
-
-    return matchesCategory && matchesQuery;
-  });
+  const visibleFaqs = getVisibleFaqs();
 
   faqList.innerHTML = "";
 
   if (resultCount) {
     resultCount.textContent = `${visibleFaqs.length}件`;
   }
+
+  renderSearchStatus(visibleFaqs.length);
 
   if (!visibleFaqs.length) {
     const empty = document.createElement("p");
@@ -382,12 +707,76 @@ function renderFaqs() {
 
     button.addEventListener("click", () => {
       activeFaqId = faq.id;
-      renderFaqs();
-      renderReader(faq);
-      readerSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      navigateToFaq(faq);
     });
 
     faqList.appendChild(node);
+  });
+}
+
+function renderSearchStatus(count) {
+  if (!searchStatus) {
+    return;
+  }
+
+  const categoryLabel = getCategoryLabel(activeCategory);
+
+  if (!activeQuery && activeCategory === "all") {
+    searchStatus.innerHTML = `<strong>全${count}件</strong>から選べます。気になる言葉で検索することもできます。`;
+    return;
+  }
+
+  const parts = [];
+
+  if (activeCategory !== "all") {
+    parts.push(`カテゴリ: ${categoryLabel}`);
+  }
+
+  if (activeQuery) {
+    parts.push(`検索: ${escapeHtml(activeQuery)}`);
+  }
+
+  searchStatus.innerHTML = `<strong>${parts.join(" / ")}</strong> に近い質問が ${count}件あります。${
+    activeQuery ? '<button type="button" data-clear-search>検索をクリア</button>' : ""
+  }`;
+}
+
+function renderEntryLists() {
+  if (!entryLists.length || !faqs.length) {
+    return;
+  }
+
+  const numberedFaqs = faqs
+    .filter((faq) => Number.isFinite(Number(faq.number)))
+    .sort((a, b) => Number(a.number) - Number(b.number));
+  const entryFaqs = numberedFaqs.length ? numberedFaqs : faqs;
+  const randomFaqs = shuffleItems(entryFaqs).slice(0, 3);
+  const usedEntryIds = new Set(randomFaqs.map((faq) => faq.id));
+  const recentPool = [...entryFaqs]
+    .reverse()
+    .slice(0, Math.min(12, entryFaqs.length))
+    .filter((faq) => !usedEntryIds.has(faq.id));
+  const freshFaqs = shuffleItems(recentPool.length ? recentPool : entryFaqs).slice(0, 3);
+
+  entryLists.forEach((list) => {
+    const items = list.dataset.entryList === "new" ? freshFaqs : randomFaqs;
+
+    list.innerHTML = "";
+    items.forEach((faq) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerHTML = `<span>${escapeHtml(formatFaqMeta(faq))}</span><strong>${escapeHtml(faq.question)}</strong>`;
+      button.addEventListener("click", () => {
+        activeQuery = "";
+        if (searchInput) {
+          searchInput.value = "";
+        }
+        setCategory(faq.category || "all");
+        activeFaqId = faq.id;
+        navigateToFaq(faq);
+      });
+      list.appendChild(button);
+    });
   });
 }
 
@@ -401,6 +790,7 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
   }
 
   activeFaqId = faq.id;
+  resetReaderScroll();
   readerTitle.textContent = withKinsoku(faq.question);
   readerBody.innerHTML = "";
   scriptureList.innerHTML = "";
@@ -428,6 +818,9 @@ function renderReader(faq = faqs.find((item) => item.id === activeFaqId)) {
       block.append(ref, text);
       scriptureList.appendChild(block);
     });
+
+  resetReaderScroll();
+  window.requestAnimationFrame(resetReaderScroll);
 }
 
 function appendBodyWithScriptureRefs(container, text, scriptures) {
@@ -1120,6 +1513,18 @@ function formatFaqMeta(faq) {
   return label;
 }
 
+function getCategoryLabel(category) {
+  const labels = {
+    all: "全部",
+    faith: "信仰",
+    church: "教会",
+    life: "生活",
+    future: "これから",
+  };
+
+  return labels[category] || "全部";
+}
+
 function isValidScriptureReference(value) {
   const normalized = normalizeReference(value);
   return /\d/.test(normalized) && normalized.length >= 4;
@@ -1191,9 +1596,17 @@ function escapeHtml(value) {
   return span.innerHTML;
 }
 
+setRandomHeroTitle();
 renderTicker();
 renderHeroPanels();
 renderThemePreviews();
+renderEntryLists();
 bindHeroMotion();
 renderFaqs();
-renderReader();
+const initialRouteFaq = getFaqFromCurrentUrl();
+if (initialRouteFaq) {
+  showQuestionRoute(initialRouteFaq, { direction: "none", updateHistory: true, replace: true });
+} else {
+  window.history.replaceState({ view: "list" }, "", window.location.href);
+  renderReader();
+}

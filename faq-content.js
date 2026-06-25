@@ -23,7 +23,7 @@ window.YouthQContent = {
       note: "faq-content.js の heroPanels で画像を差し替え",
       image: "./assets/bible.png",
       alt: "聖書の線画イラスト",
-      caption: "聖書読んだって、\n教会行ってたって、\nわからないことはあるから。",
+      caption: "聖書読んでも、\n教会行っていても、\nわからないことはあるから。",
     },
     {
       className: "panel-ink",

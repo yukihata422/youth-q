@@ -1,3 +1,48 @@
 [build]
   publish = "."
   command = ""
+
+[[redirects]]
+  from = "/q/:slug/styles.css"
+  to = "/styles.css"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/app.js"
+  to = "/app.js"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/faq-content.js"
+  to = "/faq-content.js"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/faq-notion-latest.js"
+  to = "/faq-notion-latest.js"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/faq-notion-20260511.js"
+  to = "/faq-notion-20260511.js"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/faq-notion-synced.js"
+  to = "/faq-notion-synced.js"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/assets/:file"
+  to = "/assets/:file"
+  status = 200
+
+[[redirects]]
+  from = "/q/:slug/archive.html"
+  to = "/archive.html"
+  status = 200
+
+[[redirects]]
+  from = "/q/*"
+  to = "/index.html"
+  status = 200

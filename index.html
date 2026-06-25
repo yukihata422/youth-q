@@ -99,11 +99,40 @@
         </div>
       </section>
 
+      <section class="entry-section" aria-labelledby="entry-title">
+        <div class="section-heading">
+          <p class="eyebrow">Start here</p>
+          <h2 id="entry-title">迷ったら、ここから。</h2>
+        </div>
+        <div class="entry-grid">
+          <article class="entry-panel">
+            <span>Random pick</span>
+            <h3>今日、出会う問い</h3>
+            <div class="entry-list" data-entry-list="popular"></div>
+          </article>
+          <article class="entry-panel">
+            <span>Fresh pick</span>
+            <h3>最近置かれた問い</h3>
+            <div class="entry-list" data-entry-list="new"></div>
+          </article>
+        </div>
+      </section>
+
       <section id="questions" class="questions-section" aria-labelledby="questions-title">
         <div class="section-heading">
           <p class="eyebrow">FAQ stack</p>
           <h2 id="questions-title">あるある質問</h2>
           <p class="result-count" aria-live="polite"></p>
+        </div>
+        <div class="question-tools">
+          <div class="category-tabs" aria-label="質問カテゴリ">
+            <button class="category-tab is-active" type="button" data-category="all">全部</button>
+            <button class="category-tab" type="button" data-category="faith">信仰</button>
+            <button class="category-tab" type="button" data-category="church">教会</button>
+            <button class="category-tab" type="button" data-category="life">生活</button>
+            <button class="category-tab" type="button" data-category="future">これから</button>
+          </div>
+          <div class="search-status" aria-live="polite"></div>
         </div>
         <div class="faq-layout">
           <div class="faq-list"></div>
@@ -119,6 +148,10 @@
               <button class="export-button export-pdf" type="button">PDFをダウンロード</button>
             </div>
             <div class="reader-body"></div>
+            <div class="reader-navigation" aria-label="関連する質問へ移動">
+              <button class="reader-nav-button" type="button" data-reader-action="same-category">同じカテゴリを見る</button>
+              <button class="reader-nav-button" type="button" data-reader-action="next">次の質問</button>
+            </div>
             <a class="back-to-questions" href="#questions">質問リストに戻る</a>
           </article>
           <aside class="scripture-column" aria-label="みことば引用">
