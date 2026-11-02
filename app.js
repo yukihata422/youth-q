@@ -116,7 +116,7 @@ searchStatus?.addEventListener("click", (event) => {
     searchInput.value = "";
   }
   renderFaqs();
-  searchInput?.focus();
+  document.querySelector(".question-search .u027-in")?.focus();
 });
 
 readerNavButtons.forEach((button) => {
@@ -180,14 +180,13 @@ function renderThemePreviews() {
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   activeQuery = searchInput.value.trim();
-  resetCategoryForSearch();
   renderFaqs();
   document.querySelector("#questions")?.scrollIntoView({ behavior: "smooth" });
 });
 
-searchInput?.addEventListener("input", () => {
+searchInput?.addEventListener("input", (event) => {
+  if (event.isComposing) return;
   activeQuery = searchInput.value.trim();
-  resetCategoryForSearch();
   renderFaqs();
 });
 
@@ -514,18 +513,15 @@ function mountFooterInPage() {
   mainRoot.insertAdjacentElement("afterend", siteFooter);
 }
 
-function resetCategoryForSearch() {
-  if (!activeQuery) {
-    return;
-  }
-
-  setCategory("all");
-}
-
 function setCategory(category) {
   activeCategory = category || "all";
   document.querySelectorAll("[data-category]").forEach((button) => {
-    button.classList.toggle("is-active", (button.dataset.category || "all") === activeCategory);
+    const selected = (button.dataset.category || "all") === activeCategory;
+    button.classList.toggle("is-active", selected);
+    if (button.classList.contains("category-tab")) {
+      button.setAttribute("aria-selected", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+    } else button.setAttribute("aria-pressed", String(selected));
   });
 }
 
@@ -671,11 +667,12 @@ function renderFaqs() {
   }
 
   renderSearchStatus(visibleFaqs.length);
+  document.dispatchEvent(new Event("question-results-updated"));
 
   if (!visibleFaqs.length) {
-    const empty = document.createElement("p");
+    const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "近い質問が見つかりませんでした。別の言葉で探してみてください。";
+    empty.innerHTML = '<span class="empty-state-symbol" aria-hidden="true">?</span><h3>近い質問が見つかりませんでした。</h3><p>短い言葉で検索するか、絞り込みを解除してみてください。</p><button type="button" data-reset-filters>すべての質問を見る</button><a href="#ask">ここにない質問を送る →</a>';
     faqList.appendChild(empty);
     return;
   }
@@ -719,6 +716,7 @@ function renderSearchStatus(count) {
     return;
   }
 
+  searchStatus.hidden = !activeQuery && activeCategory === "all";
   const categoryLabel = getCategoryLabel(activeCategory);
 
   if (!activeQuery && activeCategory === "all") {
@@ -737,7 +735,7 @@ function renderSearchStatus(count) {
   }
 
   searchStatus.innerHTML = `<strong>${parts.join(" / ")}</strong> に近い質問が ${count}件あります。${
-    activeQuery ? '<button type="button" data-clear-search>検索をクリア</button>' : ""
+    '<button type="button" data-reset-filters>絞り込みをリセット</button>'
   }`;
 }
 

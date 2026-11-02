@@ -1,0 +1,229 @@
+/* Lucian UX/UI Prompt theme tokens · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/
+   Every element reads its colors from these --ux-* tokens and uses the .ux base rules below. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+/* Lucian UX/UI Prompt #027 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#027 */
+
+.u027{position:relative;width:350px;height:360px}
+.u027-bar{position:absolute;left:0;right:0;top:0;height:62px;border-radius:20px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 18px 36px -26px var(--ux-shadow-strong)}
+.u027-logo{position:absolute;left:18px;top:50%;display:flex;align-items:center;gap:8px;transform:translateY(-50%);font-size:16px;font-weight:780;letter-spacing:-.03em;transition:opacity .3s var(--ux-ease),transform .5s var(--ux-ease)}
+.u027-logo i{width:22px;height:22px;border-radius:7px;background:var(--ux-grad)}
+.u027-nav{position:absolute;left:112px;top:50%;display:flex;gap:4px;transform:translateY(-50%);transition:opacity .25s var(--ux-ease),transform .5s var(--ux-ease)}
+.u027-nav a{padding:7px 10px;border-radius:10px;font-size:14px;font-weight:620;color:var(--ux-ink-2);text-decoration:none}
+.u027-nav a:hover{background:var(--ux-surface-2);color:var(--ux-ink)}
+.u027.is-open .u027-logo{opacity:0;transform:translate(-20px,-50%)}
+.u027.is-open .u027-nav{opacity:0;transform:translate(-30px,-50%);pointer-events:none}
+.u027-field{position:absolute;right:9px;top:9px;height:44px;width:44px;border-radius:14px;background:var(--ux-surface-2);overflow:hidden;transition:width .6s var(--ux-spring),background-color .3s,box-shadow .3s}
+.u027.is-open .u027-field{width:332px;background:var(--ux-surface);box-shadow:inset 0 0 0 2px var(--ux-accent)}
+.u027-go{position:absolute;left:0;top:0;width:44px;height:44px;border:0;padding:0;border-radius:14px;background:none;color:var(--ux-ink);display:grid;place-items:center;z-index:1}
+.u027-go:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.u027-go svg,.u027-x svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.u027-in{position:absolute;left:44px;right:44px;top:0;height:44px;border:0;outline:0;background:none;padding:0 4px;font-size:15.5px;color:var(--ux-ink);opacity:0;transition:opacity .3s var(--ux-ease) .15s}
+.u027-in::placeholder{color:var(--ux-ink-3)}
+.u027.is-open .u027-in{opacity:1}
+.u027-x{position:absolute;right:4px;top:4px;width:36px;height:36px;border:0;padding:0;border-radius:10px;background:var(--ux-surface-2);color:var(--ux-ink-2);display:grid;place-items:center;opacity:0;transform:scale(.6) rotate(-90deg);transition:opacity .25s,transform .5s var(--ux-spring)}
+.u027.is-open .u027-x{opacity:1;transform:none}
+.u027-x:focus-visible{outline:2px solid var(--ux-accent);outline-offset:1px}
+.u027-pop{position:absolute;left:0;right:0;top:72px;padding:14px 10px 10px;border-radius:20px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -30px var(--ux-shadow-strong);
+  transform-origin:90% 0;opacity:0;transform:translateY(-10px) scale(.96);pointer-events:none;visibility:hidden;transition:opacity .25s var(--ux-ease),transform .45s var(--ux-spring),visibility 0s .45s}
+.u027.is-open .u027-pop{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .3s var(--ux-ease) .1s,transform .55s var(--ux-spring) .1s}
+.u027-sec{margin:0 8px 8px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ux-ink-3)}
+.u027-recent{display:flex;gap:6px;flex-wrap:wrap;margin:0 6px 12px}
+.u027-recent button{height:32px;padding:0 12px;border:0;border-radius:999px;background:var(--ux-surface-2);font-size:13px;font-weight:620;color:var(--ux-ink-2)}
+.u027-recent button:hover{color:var(--ux-ink)}
+.u027-list{margin:0;padding:0;list-style:none;height:150px;overflow:hidden}
+.u027-opt{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;cursor:pointer;opacity:0;transform:translateY(6px);transition:background-color .2s var(--ux-ease),opacity .3s var(--ux-ease),transform .45s var(--ux-spring)}
+.u027.is-open .u027-opt{opacity:1;transform:none}
+.u027-opt[aria-selected="true"]{background:var(--ux-surface-2)}
+.u027-opt i{width:34px;height:34px;flex:none;border-radius:10px;background:var(--c)}
+.u027-opt b{display:block;font-size:14.5px;font-weight:650}
+.u027-opt b mark{background:none;color:var(--ux-accent);font-weight:800}
+.u027-opt small{display:block;font-size:12px;color:var(--ux-ink-3)}
+.u027-empty{padding:30px 8px;text-align:center;font-size:14px;color:var(--ux-ink-3)}
+.u027-in:focus-visible{outline:none}
+
+/* Lucian UX/UI Prompt #039 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#039 */
+
+.u039{position:relative;width:340px;height:380px}
+.u039-tabs{position:relative;display:flex;padding:5px;border-radius:999px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line)}
+.u039-pill{position:absolute;left:0;top:5px;bottom:5px;width:var(--w,80px);border-radius:999px;background:var(--ux-ink);transform:translateX(var(--x,5px));box-shadow:0 8px 16px -10px var(--ux-shadow-strong);transition:transform .5s var(--ux-spring),width .5s var(--ux-spring)}
+.u039-tab{position:relative;flex:1;height:42px;border:0;padding:0;border-radius:999px;background:none;font-size:14px;font-weight:680;color:var(--ux-ink-2);white-space:nowrap;transition:color .35s var(--ux-ease)}
+.u039-tab[aria-selected="true"]{color:var(--ux-page)}
+.u039-tab:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.u039-panel{position:relative;height:312px;margin-top:14px;overflow:hidden;border-radius:22px}
+.u039-list{position:absolute;inset:0;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.u039-row{display:flex;align-items:center;gap:12px;padding:10px;border-radius:18px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line);transition:transform .55s var(--ux-spring),opacity .35s var(--ux-ease)}
+.u039-art{position:relative;width:52px;height:52px;flex:none;border-radius:14px;background:var(--g);overflow:hidden}
+.u039-art::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.45),transparent 55%)}
+.u039-row b{display:block;font-size:15px;font-weight:700;letter-spacing:-.02em}
+.u039-row small{display:block;margin-top:3px;font-size:12.5px;color:var(--ux-ink-3)}
+.u039-row em{margin-left:auto;font-style:normal;font-size:12.5px;font-weight:650;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u039-badge{margin-left:6px;padding:2px 6px;border-radius:6px;font-size:10.5px;font-weight:800;background:var(--ux-accent-soft);color:var(--ux-accent);vertical-align:2px}
+
+/* Adapt gallery footprints to a responsive search-and-filter panel. */
+.ux{font-family:inherit}
+.question-tools.u039{
+ position:relative;top:auto;width:auto;height:auto;z-index:1;
+ gap:16px;margin-bottom:24px;padding:clamp(16px,2.5vw,28px);
+ background:var(--paper);box-shadow:5px 5px 0 var(--pink);
+ --ux-accent:#6a57f2;
+}
+.question-tool-heading{display:flex;justify-content:space-between;gap:16px;align-items:end;color:var(--ink)}
+.question-tool-heading .eyebrow{font-size:10px;letter-spacing:.14em;color:var(--muted)}
+.question-tool-heading h3{margin:4px 0 0;font-size:clamp(16px,2vw,21px);line-height:1.6}
+.question-tool-heading p{margin:0;font-size:12px;color:var(--muted)}
+.question-search.u027{width:640px;max-width:100%;height:auto;z-index:2}
+.question-search-label,.question-category-label{display:block;margin:0 0 8px;font-size:12px;font-weight:700;color:var(--ink)}
+.question-category-label{margin:0 0 -8px}
+.question-search .u027-bar{position:relative;top:auto;height:62px}
+.question-search .u027-logo{display:none}
+.question-search.u027 .u027-field{width:calc(100% - 18px);background:var(--ux-surface-2)}
+.question-search.u027.is-open .u027-field{width:calc(100% - 18px);background:var(--ux-surface);box-shadow:inset 0 0 0 2px var(--ux-accent)}
+.question-search .u027-in{min-width:0;font-size:16px;opacity:1;tab-size:4}
+.question-search .u027-x{visibility:hidden;pointer-events:none}
+.question-search.has-query .u027-x{visibility:visible;pointer-events:auto;opacity:1;transform:none}
+.question-search-help{margin:8px 4px 0;font-size:12px;color:var(--muted)}
+/* Suggestions reserve space rather than covering the filters or first question. */
+.question-search .u027-pop{position:relative;top:auto;margin-top:12px;display:none;box-shadow:0 0 0 1px var(--ux-line)}
+.question-search.is-open .u027-pop{display:block}
+.question-search .u027-list{height:auto;min-height:0}
+.question-search .u027-opt b{overflow-wrap:anywhere;line-height:1.6}
+.question-search .u027-opt[aria-selected="true"],.question-search .u027-opt:hover{background:var(--ux-surface-2)}
+.question-tools .u039-tabs{display:flex;flex-wrap:nowrap;gap:0;width:100%;max-width:640px;isolation:isolate}
+.question-tools .u039-tab{min-width:0;width:auto;min-height:42px;padding:0 8px;border:0;background:none;box-shadow:none;font-weight:680;transform:none}
+.question-tools .u039-tab.is-active{background:none;box-shadow:none}
+.question-tools .u039-tab[aria-selected="true"]{color:var(--ux-page)}
+.category-count{margin-left:5px;font-size:10px;font-variant-numeric:tabular-nums;opacity:.72}
+.question-tools .search-status{padding-top:14px;border-top:1px solid var(--soft-line);color:var(--muted);overflow-wrap:anywhere;font-size:13px;font-weight:500}
+.question-tools .search-status strong{color:var(--ink);font-weight:700}
+.question-tools .search-status button{min-height:36px;margin-left:auto;border-radius:8px;background:var(--cream);color:var(--ink);font-size:12px;box-shadow:none}
+#questions{scroll-margin-top:110px}
+#questions .faq-list{overflow-x:clip;padding:3px 8px 10px 3px}
+#questions .faq-question{min-height:96px}
+#questions .faq-question strong{font-size:clamp(17px,1.6vw,23px);line-height:1.65}
+#questions .faq-item.is-selected{background:linear-gradient(90deg,#fff5df,#ffffff)}
+#questions .faq-item:hover{background:var(--cream)}
+#questions .faq-icon{display:flex;align-items:center;justify-content:center;min-width:58px;min-height:40px;font-size:12px}
+.theme-card:focus-visible,.faq-question:focus-visible{outline:3px solid #6a57f2;outline-offset:4px}
+.question-search .u027-go:focus-visible{outline-offset:-3px}
+#questions .empty-state{display:flex;align-items:center;flex-direction:column;gap:12px;padding:36px 20px;text-align:center;border:2px dashed var(--soft-line);background:var(--cream)}
+.empty-state-symbol{display:grid;place-items:center;width:44px;height:44px;border:2px solid var(--ink);border-radius:50%;background:var(--yellow);font-size:24px;font-weight:900}
+#questions .empty-state h3{margin:0;font-size:18px}
+#questions .empty-state p{margin:0;font-size:14px;color:var(--muted)}
+#questions .empty-state button{min-height:44px;padding:8px 18px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-weight:700;cursor:pointer}
+#questions .empty-state a{padding:8px;font-size:13px;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:600px){
+ .question-tools.u039{gap:14px;padding:14px;margin-bottom:20px}
+ .question-tool-heading{display:block}
+ .question-tool-heading p{margin-top:6px;font-size:11px}
+ .question-search.u027{width:100%}
+ .question-search .u027-in{font-size:16px}
+ .question-search .u027-in::placeholder{font-size:12px}
+ .question-tools .u039-tab{padding:0 3px;font-size:12px}
+ .category-count{display:none}
+ .question-tools .search-status button{margin-left:0;min-height:44px}
+ .site-header{gap:12px}
+ .site-nav{max-width:100%;flex-wrap:wrap}
+ #questions{scroll-margin-top:150px}
+ #questions .faq-question{padding:16px;gap:8px;min-height:100px}
+ #questions .faq-question strong{font-size:17px;line-height:1.7;padding-right:0;overflow-wrap:anywhere}
+ #questions .faq-icon{min-height:36px}
+ .reader-article,.scripture-column{min-width:0;overflow-wrap:anywhere}
+ .hero-search input{min-width:0;font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

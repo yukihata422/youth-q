@@ -1,3 +1,5 @@
+<!-- Lucian UX/UI Prompt #027 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#027 -->
+<!-- Lucian UX/UI Prompt #039 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#039 -->
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -16,8 +18,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./question-ui.css?v=3" />
+    <link rel="stylesheet" href="./site-polish.css?v=1" />
   </head>
-  <body>
+  <body class="yq-site">
     <header class="site-header">
       <a class="brand" href="#top" aria-label="YOUTH Q ホーム">
         <span class="brand-mark"><span class="brand-mark-text">YQ</span></span>
@@ -124,18 +128,38 @@
           <h2 id="questions-title">あるある質問</h2>
           <p class="result-count" aria-live="polite"></p>
         </div>
-        <div class="question-tools">
-          <div class="category-tabs" aria-label="質問カテゴリ">
-            <button class="category-tab is-active" type="button" data-category="all">全部</button>
-            <button class="category-tab" type="button" data-category="faith">信仰</button>
-            <button class="category-tab" type="button" data-category="church">教会</button>
-            <button class="category-tab" type="button" data-category="life">生活</button>
-            <button class="category-tab" type="button" data-category="future">これから</button>
+        <div class="question-tools ux u039">
+<div class="ux u027 question-search">
+  <label class="question-search-label visually-hidden" for="list-question-search">キーワードで検索</label>
+  <div class="u027-bar">
+    <span class="u027-logo"><i aria-hidden="true"></i>質問検索</span>
+
+    <div class="u027-field">
+      <button class="u027-go" type="button" aria-label="質問候補を表示" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.2 4.2"/></svg></button>
+      <input id="list-question-search" aria-describedby="question-search-help" aria-label="質問一覧を検索" class="u027-in" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" placeholder="質問を検索：祈り、進路、聖書…" tabindex="0" autocomplete="off">
+      <button class="u027-x" type="button" aria-label="検索語をクリア" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button>
+    </div>
+  </div>
+  <p id="question-search-help" class="question-search-help visually-hidden">質問・回答本文・みことばから検索します。</p>
+  <div class="u027-pop">
+    <p class="u027-sec">検索のヒント</p>
+    <div class="u027-recent"><button type="button">祈り</button><button type="button">愛</button><button type="button">進路</button></div>
+    <p class="u027-sec">質問候補</p>
+    <ul class="u027-list" role="listbox" aria-label="質問候補"></ul>
+  </div>
+</div>
+          <div class="category-tabs u039-tabs" role="tablist" aria-label="質問カテゴリ">
+            <span class="u039-pill" aria-hidden="true"></span>
+            <button role="tab" aria-controls="question-results" class="u039-tab category-tab is-active" type="button" data-category="all">全部</button>
+            <button role="tab" aria-controls="question-results" class="u039-tab category-tab" type="button" data-category="faith">信仰</button>
+            <button role="tab" aria-controls="question-results" class="u039-tab category-tab" type="button" data-category="church">教会</button>
+            <button role="tab" aria-controls="question-results" class="u039-tab category-tab" type="button" data-category="life">生活</button>
+            <button role="tab" aria-controls="question-results" class="u039-tab category-tab" type="button" data-category="future">これから</button>
           </div>
           <div class="search-status" aria-live="polite"></div>
         </div>
         <div class="faq-layout">
-          <div class="faq-list"></div>
+          <div class="faq-list" id="question-results" role="tabpanel" aria-label="質問一覧"></div>
         </div>
       </section>
 
@@ -248,5 +272,6 @@
     <script src="./faq-notion-synced.js"></script>
     <div class="export-sheet" aria-hidden="true"></div>
     <script src="./app.js"></script>
+    <script src="./question-ui.js?v=3"></script>
   </body>
 </html>
